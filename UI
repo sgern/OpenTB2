@@ -1,0 +1,32 @@
+game launches into command window
+default size is 120x30
+
+title screen
+user can start game, change settings (optional rules, etc.), exit
+
+settings menu has a list of settings
+user selects setting and option
+
+exit just exits the game
+
+start game
+user selects division
+user selects first then second fighter
+
+game begins
+
+bout display has fighters' stats, endurance, points scored, strategy selected (advanced), ring location, log window, etc.
+
+start of round
+user selects styles of E-style fighters (affected numbers are shown) (NOTE: E-style only changes between rounds for simplicity)
+(advanced) user selects strategies (affected numbers are shown)
+
+round begins
+draw a card every 3.6 seconds and show and apply relevant effect
+
+end of round
+user chooses which injuries to work on
+end of round effects
+
+game end screen
+rematch or return to title screen
