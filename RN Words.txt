@@ -1,3 +1,0 @@
-81: Foul
-82: Injury
-83: Special
