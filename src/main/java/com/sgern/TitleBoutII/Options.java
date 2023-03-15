@@ -3,6 +3,7 @@ package com.sgern.TitleBoutII;
 public class Options {
 	
 	private int maxRounds;
+	private boolean injuriesEnabled;
 	private boolean cfConversionEnabled;
 	private boolean aggressivenessEnabled;
 	private boolean foulDamageEnabled;
@@ -29,6 +30,14 @@ public class Options {
 
 	public void setMaxRounds(int maxRounds) {
 		this.maxRounds = maxRounds;
+	}
+
+	public boolean isInjuriesEnabled() {
+		return injuriesEnabled;
+	}
+
+	public void setInjuriesEnabled(boolean injuriesEnabled) {
+		this.injuriesEnabled = injuriesEnabled;
 	}
 
 	public boolean isCFConversionEnabled() {
