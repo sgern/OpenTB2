@@ -20,7 +20,7 @@ public class Options {
 	private boolean ratedRefereeEnabled = false;
 	private boolean ratedCornerMenEnabled = false;
 	private String refereeErrorOption = "Off";
-	private boolean strategyEnabled = false;
+	private boolean strategiesEnabled = false;
 	private boolean fighterTraitsEnabled = false;
 	private boolean throwInTheTowelEnabled = false;
 	
@@ -168,12 +168,12 @@ public class Options {
 		this.refereeErrorOption = refereeErrorOption;
 	}
 
-	public boolean isStrategyEnabled() {
-		return strategyEnabled;
+	public boolean isStrategiesEnabled() {
+		return strategiesEnabled;
 	}
 
-	public void setStrategyEnabled(boolean strategyEnabled) {
-		this.strategyEnabled = strategyEnabled;
+	public void setStrategyEnabled(boolean strategiesEnabled) {
+		this.strategiesEnabled = strategiesEnabled;
 	}
 
 	public boolean isFighterTraitsEnabled() {
