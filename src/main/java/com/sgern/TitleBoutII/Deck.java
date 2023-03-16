@@ -9,6 +9,10 @@ public class Deck {
 	private List<Card> drawPile;
 	private List<Card> discardPile;
 	
+	public Deck(List<Card> drawPile) {
+		this.drawPile = drawPile;
+	}
+	
 	public Card drawCard() {
 		Card card = drawPile.remove(0);
 		discardPile.add(card);
