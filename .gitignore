@@ -27,3 +27,4 @@ replay_pid*
 *.txt
 target/
 
+/dependency-reduced-pom.xml
