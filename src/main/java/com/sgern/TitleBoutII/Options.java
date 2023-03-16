@@ -2,27 +2,27 @@ package com.sgern.TitleBoutII;
 
 public class Options {
 	
-	private int maxRounds;
-	private boolean injuriesEnabled;
-	private boolean cfConversionEnabled;
-	private boolean aggressivenessEnabled;
-	private boolean foulDamageEnabled;
-	private boolean headbuttCutEnabled;
-	private String advancedTimingOption;
-	private boolean extendRoundEnabled;
-	private boolean mandatoryEightCountEnabled;
-	private boolean savedByTheBellEnabled;
-	private boolean threeKnockdownRuleEnabled;
-	private boolean southpawEnabled;
-	private boolean missPenaltyEnabled;
-	private boolean kiTimingEnabled;
-	private boolean advancedClinchingEnabled;
-	private boolean ratedRefereeEnabled;
-	private boolean ratedCornerMenEnabled;
-	private String refereeErrorOption;
-	private boolean strategyEnabled;
-	private boolean fighterTraitsEnabled;
-	private boolean throwInTheTowelEnabled;
+	private int maxRounds = 12;
+	private boolean injuriesEnabled = true;
+	private boolean cfConversionEnabled = true;
+	private boolean aggressivenessEnabled = false;
+	private boolean foulDamageEnabled = false;
+	private boolean headbuttCutEnabled = false;
+	private String advancedTimingOption = "Off";
+	private boolean extendRoundEnabled = false;
+	private boolean mandatoryEightCountEnabled = false;
+	private boolean savedByTheBellEnabled = false;
+	private boolean threeKnockdownRuleEnabled = false;
+	private boolean southpawEnabled = false;
+	private boolean missPenaltyEnabled = false;
+	private boolean kiTimingEnabled = false;
+	private boolean advancedClinchingEnabled = false;
+	private boolean ratedRefereeEnabled = false;
+	private boolean ratedCornerMenEnabled = false;
+	private String refereeErrorOption = "Off";
+	private boolean strategyEnabled = false;
+	private boolean fighterTraitsEnabled = false;
+	private boolean throwInTheTowelEnabled = false;
 	
 	public int getMaxRounds() {
 		return maxRounds;
