@@ -13,6 +13,10 @@ public class Deck {
 		this.drawPile = drawPile;
 	}
 	
+	public void addCard(Card card) {
+		drawPile.add(card);
+	}
+	
 	public Card drawCard() {
 		Card card = drawPile.remove(0);
 		discardPile.add(card);
@@ -37,6 +41,11 @@ public class Deck {
 		drawPile.addAll(discardPile);
 		discardPile.clear();
 		Collections.shuffle(drawPile);
+	}
+	
+	public void clearDeck() {
+		drawPile.clear();
+		discardPile.clear();
 	}
 	
 	public boolean isEmpty() {
