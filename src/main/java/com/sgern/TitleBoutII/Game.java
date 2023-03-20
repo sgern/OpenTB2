@@ -7,6 +7,7 @@ import java.util.ListIterator;
 public class Game {
 	
 	private int roundNumber = 1;
+	private boolean controlFound;
 	private String ringPosition = "Ring Center";
 	private Referee referee;
 	private Options options;
@@ -14,6 +15,8 @@ public class Game {
 	private Fighter fighter2;
 	private Fighter attacker;
 	private Fighter defender;
+	private Fighter pinner;
+	private Fighter pinned;
 	private Fighter previousWinner;
 	private List<Card> fullDeck;
 	private Deck deck1;
@@ -37,6 +40,14 @@ public class Game {
 		this.roundNumber = roundNumber;
 	}
 	
+	public boolean isControlFound() {
+		return controlFound;
+	}
+
+	public void setControlFound(boolean controlFound) {
+		this.controlFound = controlFound;
+	}
+
 	public String getRingPosition() {
 		return ringPosition;
 	}
@@ -88,6 +99,22 @@ public class Game {
 
 	public Fighter getDefender() {
 		return defender;
+	}
+
+	public Fighter getPinner() {
+		return pinner;
+	}
+
+	public void setPinner(Fighter pinner) {
+		this.pinner = pinner;
+	}
+
+	public Fighter getPinned() {
+		return pinned;
+	}
+	
+	public void setPinned(Fighter pinned) {
+		this.pinned = pinned;
 	}
 
 	public Fighter getPreviousWinner() {
