@@ -18,7 +18,7 @@ public class Fighter {
 	private int kd2Fresh, kd2Fatigued, kd2Mod = 0;
 	private int kiFresh, kiFatigued, kiMod = 0;
 	private int koFresh, koFatigued, koMod = 0;
-	private int end, endMod = 0;
+	private int end, endMod = 0, endDrain = 0;
 	private int cutFresh, cutFatigued, cutMod = 0;
 	private String foulFresh, foulFatigued;
 	private int cpFresh, cpFatigued, cpMod = 0;
@@ -228,9 +228,13 @@ public class Fighter {
 	public void setEND(int end) {
 		this.end = end;
 	}
-	
+
 	public void modifyEND(int i) {
 		endMod += i;
+	}
+
+	public void modifyENDDrain(int i) {
+		this.endDrain += i;
 	}
 	
 	public int getCUT() {
