@@ -4,10 +4,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+
 public class Game {
 	
 	private int roundNumber = 1;
-	private boolean controlFound;
+	private boolean controlFound = false;
+	private boolean inKI = false;
 	private String ringPosition = "Ring Center";
 	private Referee referee;
 	private Options options;
@@ -23,13 +27,18 @@ public class Game {
 	private Deck deck2;
 	private Deck activeDeck;
 	private Deck inactiveDeck;
+	private XSSFSheet kdkoTable;
+	private XSSFSheet cutsSwellingTable;
 	
-	public Game(Fighter fighter1, Fighter fighter2, List<Card> fullDeck, Options options, Referee referee) {
+	public Game(Fighter fighter1, Fighter fighter2, List<Card> fullDeck, Options options, Referee referee, XSSFSheet cutsSwellingTable, XSSFSheet kdkoTable) {
 		this.fighter1 = fighter1;
 		this.fighter2 = fighter2;
 		this.fullDeck = fullDeck;
 		this.options = options;
 		this.referee = referee;
+		this.cutsSwellingTable = cutsSwellingTable;
+		this.cutsSwellingTable.removeRow(this.cutsSwellingTable.getRow(0));
+		this.kdkoTable = kdkoTable;
 	}
 	
 	public int getRoundNumber() {
@@ -46,6 +55,14 @@ public class Game {
 
 	public void setControlFound(boolean controlFound) {
 		this.controlFound = controlFound;
+	}
+
+	public boolean isInKI() {
+		return inKI;
+	}
+
+	public void setInKI(boolean inKI) {
+		this.inKI = inKI;
 	}
 
 	public String getRingPosition() {
@@ -166,6 +183,14 @@ public class Game {
 			deck1.addCard(listIterator.next());
 			deck2.addCard(listIterator.next());
 		}
+	}
+
+	public String getKDKO(int kd, int kd1) {
+		return kdkoTable.getRow(kd).getCell(kd1 + 1).getStringCellValue();
+	}
+
+	public XSSFSheet getCutsSwellingTable() {
+		return cutsSwellingTable;
 	}
 	
 }
