@@ -37,6 +37,12 @@ public class Deck {
 		return stack;
 	}
 	
+	public void returnStack(Deck stack) {
+		while (!stack.isEmpty()) {
+			drawPile.add(stack.drawCard());
+		}
+	}
+	
 	public void shuffleDeck() {
 		drawPile.addAll(discardPile);
 		discardPile.clear();
@@ -50,6 +56,10 @@ public class Deck {
 	
 	public boolean isEmpty() {
 		return drawPile.isEmpty();
+	}
+	
+	public int getCardsLeft() {
+		return drawPile.size();
 	}
 	
 }
