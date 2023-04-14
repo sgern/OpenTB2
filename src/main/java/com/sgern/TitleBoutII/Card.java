@@ -11,9 +11,9 @@ public class Card {
 	private int kd2;
 	private int kor;
 	private int kdc;
-	private int j1;
-	private int j2;
-	private int j3;
+	private String j1;
+	private String j2;
+	private String j3;
 	private int injury;
 	private int specialAction;
 	
@@ -26,6 +26,10 @@ public class Card {
 	}
 	
 	public int getRN() {
+		return rn > 80 ? result : rn;
+	}
+	
+	public int getExtendedRN() {
 		return rn;
 	}
 	
@@ -89,27 +93,27 @@ public class Card {
 		this.kdc = kdc;
 	}
 
-	public int getJ1() {
+	public String getJ1() {
 		return j1;
 	}
 
-	public void setJ1(int j1) {
+	public void setJ1(String j1) {
 		this.j1 = j1;
 	}
 
-	public int getJ2() {
+	public String getJ2() {
 		return j2;
 	}
 
-	public void setJ2(int j2) {
+	public void setJ2(String j2) {
 		this.j2 = j2;
 	}
 
-	public int getJ3() {
+	public String getJ3() {
 		return j3;
 	}
 
-	public void setJ3(int j3) {
+	public void setJ3(String j3) {
 		this.j3 = j3;
 	}
 
