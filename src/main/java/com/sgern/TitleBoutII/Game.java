@@ -4,19 +4,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 public class Game {
 	
 	private int roundNumber = 1;
+	private int finalRoundNumber;
 	private boolean controlFound = false;
 	private boolean inKI = false;
+	private boolean oneMoreRound = false;
 	private String ringPosition = "Ring Center";
 	private Referee referee;
+	private String doctorRating;
 	private Options options;
 	private Fighter fighter1;
 	private Fighter fighter2;
+	private Fighter[] fighters = {fighter1, fighter2};
 	private Fighter attacker;
 	private Fighter defender;
 	private Fighter pinner;
@@ -27,6 +30,7 @@ public class Game {
 	private Deck deck2;
 	private Deck activeDeck;
 	private Deck inactiveDeck;
+	private Deck kiStack;
 	private XSSFSheet kdkoTable;
 	private XSSFSheet cutsSwellingTable;
 	
@@ -49,6 +53,14 @@ public class Game {
 		this.roundNumber = roundNumber;
 	}
 	
+	public int getFinalRoundNumber() {
+		return finalRoundNumber;
+	}
+
+	public void setFinalRoundNumber(int finalRoundNumber) {
+		this.finalRoundNumber = finalRoundNumber;
+	}
+
 	public boolean isControlFound() {
 		return controlFound;
 	}
@@ -65,6 +77,14 @@ public class Game {
 		this.inKI = inKI;
 	}
 
+	public boolean isOneMoreRound() {
+		return oneMoreRound;
+	}
+
+	public void setOneMoreRound(boolean oneMoreRound) {
+		this.oneMoreRound = oneMoreRound;
+	}
+
 	public String getRingPosition() {
 		return ringPosition;
 	}
@@ -79,6 +99,14 @@ public class Game {
 
 	public void setReferee(Referee referee) {
 		this.referee = referee;
+	}
+
+	public String getDoctorRating() {
+		return doctorRating;
+	}
+
+	public void setDoctorRating(String doctorRating) {
+		this.doctorRating = doctorRating;
 	}
 
 	public Options getOptions() {
@@ -103,6 +131,10 @@ public class Game {
 
 	public void setFighter2(Fighter fighter2) {
 		this.fighter2 = fighter2;
+	}
+
+	public Fighter[] getFighters() {
+		return fighters;
 	}
 
 	public Fighter getAttacker() {
@@ -164,14 +196,11 @@ public class Game {
 
 	public void setActiveDeck(Deck activeDeck) {
 		this.activeDeck = activeDeck;
+		this.inactiveDeck = this.activeDeck.equals(deck1) ? deck2 : deck1;
 	}
 
 	public Deck getInactiveDeck() {
 		return inactiveDeck;
-	}
-
-	public void setInactiveDeck(Deck inactiveDeck) {
-		this.inactiveDeck = inactiveDeck;
 	}
 	
 	public void makeDecks() {
@@ -185,12 +214,94 @@ public class Game {
 		}
 	}
 
+	public Deck getKIStack() {
+		return kiStack;
+	}
+
+	public void setKIStack(Deck kiStack) {
+		this.kiStack = kiStack;
+	}
+
 	public String getKDKO(int kd, int kd1) {
 		return kdkoTable.getRow(kd).getCell(kd1 + 1).getStringCellValue();
 	}
 
 	public XSSFSheet getCutsSwellingTable() {
 		return cutsSwellingTable;
+	}
+
+	public int getCondition(int rn, int ko) {
+		if (ko <= 1) {
+			if (rn <= 75) return 0;
+			if (rn <= 78) return 1;
+			if (rn == 79) return 2;
+			return 3;
+		} else if (ko <= 3) {
+			if (rn <= 70) return 0;
+			if (rn <= 76) return 1;
+			if (rn <= 78) return 2;
+			return 3;
+		} else {
+			if (rn <= 65) return 0;
+			if (rn <= 74) return 1;
+			if (rn <= 77) return 2;
+			return 3;
+		}
+	}
+	
+	public String getFoul(int rn, String foul) {
+		switch (foul) {
+			case "A":
+				if (rn <= 66) return "tells both fighters to keep it clean";
+				if (rn <= 68) return "for hitting below the belt (low blow)";
+				if (rn <= 70) return "for leading with the head (head butt)";
+				if (rn <= 72) return "for hitting behind the head (rabbit punching)";
+				if (rn <= 73) return "for using an arm to push his opponent's head down";
+				if (rn <= 74) return "for following up a punch with an elbow";
+				if (rn <= 75) return "for hitting on the break";
+				if (rn <= 77) return "for refusing to break cleanly";
+				return "for eye gouging";
+			case "B":
+				if (rn <= 64) return "tells both fighters to keep it clean";
+				if (rn <= 67) return "for hitting below the belt (low blow)";
+				if (rn <= 69) return "for leading with the head (head butt)";
+				if (rn <= 71) return "for hitting behind the head (rabbit punching)";
+				if (rn <= 72) return "for using an arm to push his opponent's head down";
+				if (rn <= 73) return "for following up a punch with an elbow";
+				if (rn <= 74) return "for hitting on the break";
+				if (rn <= 76) return "for refusing to break cleanly";
+				return "for eye gouging";
+			case "C":
+				if (rn <= 62) return "tells both fighters to keep it clean";
+				if (rn <= 66) return "for hitting below the belt (low blow)";
+				if (rn <= 69) return "for leading with the head (head butt)";
+				if (rn <= 70) return "for hitting behind the head (rabbit punching)";
+				if (rn <= 71) return "for using an arm to push his opponent's head down";
+				if (rn <= 72) return "for following up a punch with an elbow";
+				if (rn <= 73) return "for hitting on the break";
+				if (rn <= 75) return "for refusing to break cleanly";
+				return "for eye gouging";
+			case "D":
+				if (rn <= 57) return "tells both fighters to keep it clean";
+				if (rn <= 63) return "for hitting below the belt (low blow)";
+				if (rn <= 66) return "for leading with the head (head butt)";
+				if (rn <= 68) return "for hitting behind the head (rabbit punching)";
+				if (rn <= 69) return "for using an arm to push his opponent's head down";
+				if (rn <= 70) return "for following up a punch with an elbow";
+				if (rn <= 72) return "for hitting on the break";
+				if (rn <= 74) return "for refusing to break cleanly";
+				return "for eye gouging";
+			default:
+				if (rn <= 52) return "tells both fighters to keep it clean";
+				if (rn <= 57) return "for hitting below the belt (low blow)";
+				if (rn <= 62) return "for leading with the head (head butt)";
+				if (rn <= 66) return "for hitting behind the head (rabbit punching)";
+				if (rn <= 67) return "for using an arm to push his opponent's head down";
+				if (rn <= 69) return "for following up a punch with an elbow";
+				if (rn <= 72) return "for hitting on the break";
+				if (rn <= 74) return "for refusing to break cleanly";
+				return "for eye gouging";
+		}
 	}
 	
 }
