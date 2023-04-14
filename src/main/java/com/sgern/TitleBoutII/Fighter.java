@@ -1,6 +1,7 @@
 package com.sgern.TitleBoutII;
 
 import java.util.Set;
+import java.util.HashSet;
 
 public class Fighter {
 	
@@ -37,13 +38,22 @@ public class Fighter {
 	private int combination3;
 	private int combination2;
 	private int uppercut3;
-	private boolean fresh;
-	private int points, pointsTwoRounds, pointsThreeRounds;
+	private boolean fresh = true;
+	private int points = 0, pointsTwoRounds = 0, pointsThreeRounds = 0;
+	private int condition = 0;
+	private boolean condition3 = false;
+	private int damage = 0;
+	private int warnings = 0;
+	private int pointsLost = 0;
 	private int[][] score;
-	private boolean knockedDown;
-	private boolean carryover;
+	private int knockdowns = 0;
+	private int kdc = 0;
+	private boolean carryover = false;
 	private CornerMan chiefCornerMan, secondCornerMan;
-	// times knocked down, conditions, carryover, injuries
+	private Set<Integer> injuries = new HashSet<>();
+	private boolean resolvedInjury8 = false;
+	private boolean resolvedInjury9 = false;
+	private int special6 = 0;
 	
 	public String getName() {
 		return name;
@@ -231,6 +241,13 @@ public class Fighter {
 
 	public void modifyEND(int i) {
 		endMod += i;
+		if (endMod <= -end) {
+			endMod = -end;
+		}
+	}
+	
+	public int getENDDrain() {
+		return endDrain;
 	}
 
 	public void modifyENDDrain(int i) {
@@ -474,6 +491,11 @@ public class Fighter {
 	}
 	
 	public void scorePoints(int points) {
+		if (injuries.contains(6)) {
+			points--;
+		} else if ((injuries.contains(5) && points == 2) || (injuries.contains(7) && points == 3)) {
+			points--;
+		}
 		this.points += points;
 		pointsTwoRounds += points;
 		pointsThreeRounds += points;
@@ -485,21 +507,85 @@ public class Fighter {
 		points = 0;
 	}
 
+	public int getCondition() {
+		return condition;
+	}
+
+	public void setCondition(int condition) {
+		this.condition = condition;
+	}
+
+	public boolean isCondition3() {
+		return condition3;
+	}
+
+	public void setCondition3(boolean condition3) {
+		this.condition3 = condition3;
+	}
+
+	public int getDamage() {
+		return damage;
+	}
+
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+	
+	public void modifyDamage(int damage) {
+		this.damage += damage;
+	}
+
+	public int getWarnings() {
+		return warnings;
+	}
+
+	public void addWarning() {
+		this.warnings++;
+	}
+
+	public int getPointsLost() {
+		return pointsLost;
+	}
+
+	public void addPointLost() {
+		this.pointsLost++;
+	}
+
+	public void clearPointsLost() {
+		this.pointsLost = 0;
+	}
+
 	public int[][] getScore() {
 		return score;
 	}
 	
 	// maybe change how this works?
 	public void setScore(int judge, int roundNumber, int score) {
-		this.score[judge - 1][roundNumber - 1] = score;
+		this.score[judge - 1][roundNumber - 1] = score - pointsLost;
 	}
 
-	public boolean isKnockedDown() {
-		return knockedDown;
+	public int getKnockdowns() {
+		return knockdowns;
 	}
 
-	public void setKnockedDown(boolean knockedDown) {
-		this.knockedDown = knockedDown;
+	public void addKnockdown() {
+		this.knockdowns++;
+	}
+
+	public void clearKnockdowns() {
+		this.knockdowns = 0;
+	}
+
+	public int getKDC() {
+		return kdc;
+	}
+
+	public void addKDC(int kdc) {
+		this.kdc += kdc;
+	}
+
+	public void clearKDC(int kdc) {
+		this.kdc += kdc;
 	}
 
 	public boolean isCarryover() {
@@ -508,6 +594,38 @@ public class Fighter {
 
 	public void setCarryover(boolean carryover) {
 		this.carryover = carryover;
+	}
+
+	public Set<Integer> getInjuries() {
+		return injuries;
+	}
+
+	public void addInjury(int injury) {
+		this.injuries.add(injury);
+	}
+
+	public boolean isResolvedInjury8() {
+		return resolvedInjury8;
+	}
+
+	public void setResolvedInjury8(boolean resolvedInjury8) {
+		this.resolvedInjury8 = resolvedInjury8;
+	}
+
+	public boolean isResolvedInjury9() {
+		return resolvedInjury9;
+	}
+
+	public void setResolvedInjury9(boolean resolvedInjury9) {
+		this.resolvedInjury9 = resolvedInjury9;
+	}
+
+	public int getSpecial6() {
+		return special6;
+	}
+
+	public void addSpecial6() {
+		this.special6++;
 	}
 	
 }
