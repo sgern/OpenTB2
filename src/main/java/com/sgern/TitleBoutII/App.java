@@ -28,6 +28,17 @@ public class App {
 	static XSSFWorkbook workbook;
 	static XSSFSheet cutsSwellingTable;
 	static {
+    	File f = new File("options.ini");
+    	if (!f.exists()) {
+    		try {
+				f.createNewFile();
+			} catch (IOException e) {
+				System.err.println("ERROR: Unable to create options.ini!");
+			}
+    	}
+    	
+	}
+	static {
 		try {
 			workbook = new XSSFWorkbook(new FileInputStream(new File(pathname)));
 			cutsSwellingTable = workbook.getSheet("Cuts and Swelling");
@@ -2021,8 +2032,6 @@ public class App {
 		}
 		return true;
 	}
-	
-	// TODO this can get the header row
 	
 	public static boolean standardRefereeSelectionMenu(Row fighter1, Row fighter2) {
 		// list of referee types

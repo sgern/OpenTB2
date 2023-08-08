@@ -26,5 +26,6 @@ replay_pid*
 .~lock.*
 *.txt
 target/
+*.ini
 
 /dependency-reduced-pom.xml
