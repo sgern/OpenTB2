@@ -7,7 +7,7 @@ import java.util.List;
 public class Deck {
 	
 	private List<Card> drawPile;
-	private List<Card> discardPile;
+	private List<Card> discardPile = new ArrayList<>();
 	
 	public Deck(List<Card> drawPile) {
 		this.drawPile = drawPile;
@@ -37,6 +37,7 @@ public class Deck {
 		return stack;
 	}
 	
+	// TODO try and pull from the discard?
 	public void returnStack(Deck stack) {
 		while (!stack.isEmpty()) {
 			drawPile.add(stack.drawCard());

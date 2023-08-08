@@ -1,9 +1,11 @@
 package com.sgern.TitleBoutII;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 public class Game {
@@ -12,45 +14,49 @@ public class Game {
 	private int finalRoundNumber;
 	private boolean controlFound = false;
 	private boolean inKI = false;
-	private boolean oneMoreRound = false;
+	private boolean inOvertime = false;
+	private boolean gameOver = false;
+	private boolean inControlCheck = false;
 	private String ringPosition = "Ring Center";
 	private Referee referee;
 	private String doctorRating;
-	private Options options;
 	private Fighter fighter1;
 	private Fighter fighter2;
-	private Fighter[] fighters = {fighter1, fighter2};
+	private Fighter[] fighters = new Fighter[2];
 	private Fighter attacker;
 	private Fighter defender;
 	private Fighter pinner;
 	private Fighter pinned;
-	private Fighter previousWinner;
+	private Fighter previousWinner = null;
 	private List<Card> fullDeck;
-	private Deck deck1;
-	private Deck deck2;
+	private Deck deck1 = new Deck(new ArrayList<Card>());
+	private Deck deck2 = new Deck(new ArrayList<Card>());
 	private Deck activeDeck;
 	private Deck inactiveDeck;
 	private Deck kiStack;
 	private XSSFSheet kdkoTable;
 	private XSSFSheet cutsSwellingTable;
 	
-	public Game(Fighter fighter1, Fighter fighter2, List<Card> fullDeck, Options options, Referee referee, XSSFSheet cutsSwellingTable, XSSFSheet kdkoTable) {
+	public Game(Fighter fighter1, Fighter fighter2, List<Card> fullDeck, Referee referee, String doctorRating, Options options, XSSFSheet cutsSwellingTable, XSSFSheet kdkoTable) {
 		this.fighter1 = fighter1;
 		this.fighter2 = fighter2;
 		this.fullDeck = fullDeck;
-		this.options = options;
+		this.doctorRating = doctorRating;
 		this.referee = referee;
 		this.cutsSwellingTable = cutsSwellingTable;
-		this.cutsSwellingTable.removeRow(this.cutsSwellingTable.getRow(0));
 		this.kdkoTable = kdkoTable;
+		
+		this.fighters[0] = fighter1;
+		this.fighters[1] = fighter2;
+		this.finalRoundNumber = options.getMaxRounds();
 	}
 	
 	public int getRoundNumber() {
 		return roundNumber;
 	}
 	
-	public void setRoundNumber(int roundNumber) {
-		this.roundNumber = roundNumber;
+	public void incrementRoundNumber() {
+		roundNumber++;
 	}
 	
 	public int getFinalRoundNumber() {
@@ -77,12 +83,28 @@ public class Game {
 		this.inKI = inKI;
 	}
 
-	public boolean isOneMoreRound() {
-		return oneMoreRound;
+	public boolean isInOvertime() {
+		return inOvertime;
 	}
 
-	public void setOneMoreRound(boolean oneMoreRound) {
-		this.oneMoreRound = oneMoreRound;
+	public void setInOvertime(boolean inOvertime) {
+		this.inOvertime = inOvertime;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+	}
+
+	public boolean isInControlCheck() {
+		return inControlCheck;
+	}
+
+	public void setInControlCheck(boolean inControlCheck) {
+		this.inControlCheck = inControlCheck;
 	}
 
 	public String getRingPosition() {
@@ -105,18 +127,6 @@ public class Game {
 		return doctorRating;
 	}
 
-	public void setDoctorRating(String doctorRating) {
-		this.doctorRating = doctorRating;
-	}
-
-	public Options getOptions() {
-		return options;
-	}
-
-	public void setOptions(Options options) {
-		this.options = options;
-	}
-
 	public Fighter getFighter1() {
 		return fighter1;
 	}
@@ -135,6 +145,10 @@ public class Game {
 
 	public Fighter[] getFighters() {
 		return fighters;
+	}
+	
+	public Fighter getOpponentOf(Fighter fighter) {
+		return fighter.equals(fighter1) ? fighter2 : fighter1;
 	}
 
 	public Fighter getAttacker() {
@@ -223,6 +237,9 @@ public class Game {
 	}
 
 	public String getKDKO(int kd, int kd1) {
+		if (kdkoTable.getRow(kd).getCell(kd1 + 1).getCellType().equals(CellType.NUMERIC)) {
+			return Integer.toString((int) kdkoTable.getRow(kd).getCell(kd1 + 1).getNumericCellValue());
+		}
 		return kdkoTable.getRow(kd).getCell(kd1 + 1).getStringCellValue();
 	}
 

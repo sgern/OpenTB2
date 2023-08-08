@@ -1,7 +1,9 @@
 package com.sgern.TitleBoutII;
 
 import java.util.Set;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class Fighter {
 	
@@ -10,7 +12,7 @@ public class Fighter {
 	private int or;
 	private String style;
 	private String currentStyle;
-	private Set<String> special;
+	private List<String> special;
 	private int cfbFresh, cfbFatigued, cfbMod = 0;
 	private int cfsFresh, cfsFatigued, cfsMod = 0;
 	private int defFresh, defFatigued, defMod = 0;
@@ -45,12 +47,15 @@ public class Fighter {
 	private int damage = 0;
 	private int warnings = 0;
 	private int pointsLost = 0;
-	private int[][] score;
+	private int[][] score = new int[3][15];
 	private int knockdowns = 0;
 	private int kdc = 0;
 	private boolean carryover = false;
-	private CornerMan chiefCornerMan, secondCornerMan;
+	private CornerMan cutMan, trainer;
+	private List<Cut> cutList = new ArrayList<>();
+	private Set<String> cutTypes = new HashSet<>();
 	private Set<Integer> injuries = new HashSet<>();
+	private boolean nextRoundCheck = false;
 	private boolean resolvedInjury8 = false;
 	private boolean resolvedInjury9 = false;
 	private int special6 = 0;
@@ -95,11 +100,11 @@ public class Fighter {
 		this.currentStyle = currentStyle;
 	}
 
-	public Set<String> getSpecial() {
+	public List<String> getSpecial() {
 		return special;
 	}
 	
-	public void setSpecial(Set<String> special) {
+	public void setSpecial(List<String> special) {
 		this.special = special;
 	}
 	
@@ -232,7 +237,7 @@ public class Fighter {
 	}
 	
 	public int getEND() {
-		return end += endMod;
+		return end + endMod;
 	}
 	
 	public void setEND(int end) {
@@ -241,9 +246,10 @@ public class Fighter {
 
 	public void modifyEND(int i) {
 		endMod += i;
-		if (endMod <= -end) {
-			endMod = -end;
-		}
+	}
+	
+	public void zeroEND() {
+		endMod = -end;
 	}
 	
 	public int getENDDrain() {
@@ -470,6 +476,22 @@ public class Fighter {
 		this.uppercut3 = uppercut3;
 	}
 
+	public CornerMan getCutMan() {
+		return cutMan;
+	}
+
+	public void setCutMan(CornerMan cutMan) {
+		this.cutMan = cutMan;
+	}
+
+	public CornerMan getTrainer() {
+		return trainer;
+	}
+
+	public void setTrainer(CornerMan trainer) {
+		this.trainer = trainer;
+	}
+
 	public boolean isFresh() {
 		return fresh;
 	}
@@ -526,10 +548,6 @@ public class Fighter {
 	public int getDamage() {
 		return damage;
 	}
-
-	public void setDamage(int damage) {
-		this.damage = damage;
-	}
 	
 	public void modifyDamage(int damage) {
 		this.damage += damage;
@@ -559,7 +577,6 @@ public class Fighter {
 		return score;
 	}
 	
-	// maybe change how this works?
 	public void setScore(int judge, int roundNumber, int score) {
 		this.score[judge - 1][roundNumber - 1] = score - pointsLost;
 	}
@@ -584,8 +601,8 @@ public class Fighter {
 		this.kdc += kdc;
 	}
 
-	public void clearKDC(int kdc) {
-		this.kdc += kdc;
+	public void clearKDC() {
+		kdc = 0;
 	}
 
 	public boolean isCarryover() {
@@ -596,12 +613,44 @@ public class Fighter {
 		this.carryover = carryover;
 	}
 
+	public List<Cut> getCutList() {
+		return cutList;
+	}
+	
+	public void addCut(Cut cut) {
+		cutList.add(cut);
+	}
+	
+	public void removeCut(Cut cut) {
+		cutList.remove(cut);
+	}
+	
+	public void worsenCut(Cut cut) {
+		cutList.set(cutList.indexOf(cut), new Cut(cut.getCutType(), cut.getDP() + 1));
+	}
+
+	public Set<String> getCutTypes() {
+		return cutTypes;
+	}
+
+	public void addCutType(String cutType) {
+		this.cutTypes.add(cutType);
+	}
+
 	public Set<Integer> getInjuries() {
 		return injuries;
 	}
 
 	public void addInjury(int injury) {
 		this.injuries.add(injury);
+	}
+
+	public boolean isNextRoundCheck() {
+		return nextRoundCheck;
+	}
+
+	public void setNextRoundCheck(boolean nextRoundCheck) {
+		this.nextRoundCheck = nextRoundCheck;
 	}
 
 	public boolean isResolvedInjury8() {
