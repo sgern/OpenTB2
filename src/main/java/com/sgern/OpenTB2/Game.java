@@ -1,4 +1,4 @@
-package com.sgern.TitleBoutII;
+package com.sgern.OpenTB2;
 
 import java.util.ArrayList;
 import java.util.Collections;

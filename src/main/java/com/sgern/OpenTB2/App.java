@@ -1,4 +1,4 @@
-package com.sgern.TitleBoutII;
+package com.sgern.OpenTB2;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +24,7 @@ public class App {
 	
 	static AppView view = new AppView();
 	static Scanner in = new Scanner(System.in);
-	static String pathname = "TitleBoutII.xlsx";
+	static String pathname = "OpenTB2.xlsx";
 	static XSSFWorkbook workbook;
 	static XSSFSheet cutsSwellingTable;
 	static {

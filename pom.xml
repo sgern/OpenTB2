@@ -5,10 +5,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.sgern</groupId>
-  <artifactId>TitleBoutII</artifactId>
+  <artifactId>OpenTB2</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
-  <name>TitleBoutII</name>
+  <name>OpenTB2</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 

@@ -29,3 +29,4 @@ target/
 *.ini
 
 /dependency-reduced-pom.xml
+/bin/
