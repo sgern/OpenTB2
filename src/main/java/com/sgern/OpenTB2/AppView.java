@@ -33,12 +33,12 @@ public class AppView {
 	}
 	
 	public void printBigTitle() {
-		int width = 120, height = 9;
+		int width = 120, height = 11;
 		BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 		Graphics graphics = bufferedImage.getGraphics();
 		Graphics2D graphics2D = (Graphics2D) graphics;
 		graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		graphics2D.drawString("TITLE BOUT II", 22, 9);
+		graphics2D.drawString("OpenTB2", 22, 9);
 		for (int y = 0; y < height; y++) {
 		    StringBuilder stringBuilder = new StringBuilder();
 		    for (int x = 0; x < width; x++) {
