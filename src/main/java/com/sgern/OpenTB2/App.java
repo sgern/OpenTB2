@@ -64,7 +64,7 @@ public class App {
 			if (fighter.isNextRoundCheck()) {
 				if (fighter.getDamage() >= 10 && fighter.getDamage() <= 15) {
 					view.messageLog.addToLog("The referee considers calling the doctor over to take a look at " + fighter.getName() + ".");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					int cf = game.getInactiveDeck().drawAndReturn().getResult();
 					int performDoctorCheck = 0;
 					switch (game.getReferee().getFouls()) {
@@ -109,7 +109,7 @@ public class App {
 			if (fighter.getInjuries().contains(2)) {
 				if (game.getInactiveDeck().drawAndReturn().getRN() <= 8) {
 					view.messageLog.addToLog(fighter.getName() + " is unable to continue due to his broken rib!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					if (winner != null) {
 						endGame(game, null, "draw");
 						return;
@@ -129,12 +129,17 @@ public class App {
 			if (fighter.getInjuries().contains(4)) {
 				fighter.modifyEND(-5);
 				view.messageLog.addToLog(fighter.getName() + " loses some stamina from his broken nose.");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 		
+		if (game.getRoundNumber() == game.getFinalRoundNumber()) {
+			view.messageLog.addToLog(game.getFighter1().getName() + " and " + game.getFighter2().getName() + " touch gloves. This is the final round!");
+			view.printGame(game, 2000);
+		}
+		
 		view.messageLog.addToLog("Round " + game.getRoundNumber() + ", START!");
-		view.printGame(game);
+		view.printGame(game, 2000);
 		
 		// set starting attacker
 		if (game.getFighter1().getAGG() > game.getFighter2().getAGG()) {
@@ -161,21 +166,20 @@ public class App {
 			}
 		}
 		view.messageLog.addToLog(game.getAttacker().getName() + " takes the initiative!");
-		view.printGame(game);
+		view.printGame(game, 2000);
 		
 		game.setControlFound(false);
 	}
 	
 	public static void roundLoop(Game game) {
-		while (!game.getActiveDeck().isEmpty() && !game.isGameOver()) {
-			
+		if (options.getERatingSelectionFrequency().equals("PerRound")) {
 			// E-rated fighters choose fighting style
 			for (Fighter fighter : game.getFighters()) {
 				if (fighter.getStyle().equals("E")) {
 					view.messageLog.addToLog("Choose " + fighter.getName() + "'s fighting style: (B/S)");
 					boolean done = false;
 					while (!done) {
-						view.printGame(game);
+						view.printGame(game, 2000);
 						switch (in.next()) {
 							case "B":
 								done = true;
@@ -193,6 +197,35 @@ public class App {
 					}
 				}
 			}
+		}
+		while (!game.getActiveDeck().isEmpty() && !game.isGameOver()) {
+			
+			if (options.getERatingSelectionFrequency().equals("PerTurn")) {
+				// E-rated fighters choose fighting style
+				for (Fighter fighter : game.getFighters()) {
+					if (fighter.getStyle().equals("E")) {
+						view.messageLog.addToLog("Choose " + fighter.getName() + "'s fighting style: (B/S)");
+						boolean done = false;
+						while (!done) {
+							view.printGame(game, 2000);
+							switch (in.next()) {
+								case "B":
+									done = true;
+									fighter.setCurrentStyle("B");
+									fighter.modifyKP(-2);
+									break;
+								case "S":
+									done = true;
+									if (fighter.getCurrentStyle().equals("B")) {
+										fighter.modifyKP(2);
+									}
+									fighter.setCurrentStyle("S");
+									break;
+							}
+						}
+					}
+				}
+			}
 			
 			// if not in KI, do control check
 			if (!game.isInKI()) {
@@ -206,7 +239,7 @@ public class App {
 			if (game.isInKI() && game.getKIStack().isEmpty()) {
 				game.setInKI(false);
 				view.messageLog.addToLog(game.getAttacker().getName() + " calms down a bit.");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 	}
@@ -222,11 +255,11 @@ public class App {
 			} else {
 				game.setAttacker(game.getDefender());
 				view.messageLog.addToLog("The two fighters struggle for control...");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 		game.setInControlCheck(false);
-		view.printGame(game);
+		view.printGame(game, 2000);
 	}
 	
 	public static void actionSelection(Game game) {
@@ -307,7 +340,7 @@ public class App {
 				game.getAttacker().scorePoints(2);
 				view.messageLog.addToLog(game.getAttacker().getName() + " lands an uppercut on " + game.getDefender().getName() + "!");
 			}
-			view.printGame(game);
+			view.printGame(game, 2000);
 			
 			// check for TKO based on in-round scoring
 			tkoCheck(game);
@@ -342,7 +375,7 @@ public class App {
 				case "4":
 					game.getAttacker().scorePoints(4);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -354,7 +387,7 @@ public class App {
 					oldPoints = game.getAttacker().getPoints();
 					game.getAttacker().scorePoints(5);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -367,7 +400,7 @@ public class App {
 					if (game.isInKI() && isCounterpunch && newPoints - oldPoints >= 5) {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getDefender().getName() + " loses his momentum from the heavy counterattack!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
@@ -377,7 +410,7 @@ public class App {
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
 							game.setPinner(null);
 							game.setPinned(null);
-							view.printGame(game);
+							view.printGame(game, 2000);
 						}
 					}
 					break;
@@ -385,7 +418,7 @@ public class App {
 					oldPoints = game.getAttacker().getPoints();
 					game.getAttacker().scorePoints(5);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -396,7 +429,7 @@ public class App {
 					if (game.isInKI() && isCounterpunch && newPoints - oldPoints >= 5) {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getDefender().getName() + " loses his momentum from the heavy counterattack!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
@@ -406,18 +439,18 @@ public class App {
 							game.setPinner(null);
 							game.setPinned(null);
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
-							view.printGame(game);
+							view.printGame(game, 2000);
 						}
 					}
 					game.setControlFound(true);
 					view.messageLog.addToLog(game.getAttacker().getName() + " presses the advantage!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				case "5F":
 					oldPoints = game.getAttacker().getPoints();
 					game.getAttacker().scorePoints(5);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -430,13 +463,13 @@ public class App {
 					} else if (game.isInKI() && isCounterpunch && newPoints - oldPoints >= 5) {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getDefender().getName() + " loses his momentum from the heavy counterattack!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				case "K1-10":
 					game.getAttacker().scorePoints(6);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -446,7 +479,7 @@ public class App {
 					if (game.isInKI() && isCounterpunch) {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getDefender().getName() + " loses his momentum from the heavy counterattack!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
@@ -468,13 +501,13 @@ public class App {
 					} else {
 						game.getDefender().modifyKD1(game.getDefender().getKD2());
 						view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				case "K":
 					game.getAttacker().scorePoints(6);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -484,7 +517,7 @@ public class App {
 					if (game.isInKI() && isCounterpunch) {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getDefender().getName() + " loses his momentum from the heavy counterattack!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
@@ -494,7 +527,7 @@ public class App {
 							game.setPinner(null);
 							game.setPinned(null);
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
-							view.printGame(game);
+							view.printGame(game, 2000);
 						}
 					}
 					knockout(game);
@@ -505,7 +538,7 @@ public class App {
 				case "*":
 					game.getAttacker().scorePoints(6);
 					view.messageLog.addToLog(game.getAttacker().getName() + " lands a critical hit on " + game.getDefender().getName() + "!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					
 					// check for TKO based on in-round scoring
 					tkoCheck(game);
@@ -515,7 +548,7 @@ public class App {
 					if (game.isInKI() && isCounterpunch) {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getDefender().getName() + " loses his momentum from the heavy counterattack!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
@@ -525,7 +558,7 @@ public class App {
 							game.setPinner(null);
 							game.setPinned(null);
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
-							view.printGame(game);
+							view.printGame(game, 2000);
 						}
 					}
 					card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
@@ -538,7 +571,7 @@ public class App {
 					} else {
 						game.getDefender().modifyKD1(game.getDefender().getKD2());
 						view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 			}
@@ -551,9 +584,8 @@ public class App {
 	}
 	
 	public static void knockout(Game game) {
-		String count = "";
 		view.messageLog.addToLog(game.getDefender().getName() + " is knocked down!");
-		view.printGame(game);
+		view.printGame(game, 2000);
 		Deck deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 		if (!deck.isEmpty() || game.isInOvertime()) {
 			
@@ -571,15 +603,16 @@ public class App {
 					card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
 					game.getDefender().addKnockdown();
 					game.getDefender().addKDC(card.getKDC());
+					view.messageLog.addToLog("");
 					for (int i = 1; i <= card.getKDC(); i++) {
-						count += i + ", ";
+						view.messageLog.addToCurrentMessage(i + "... ");
+						view.printGame(game, 1000);
 					}
-					count = count.substring(0, count.length() - 2);
-					view.messageLog.addToLog(count + "... and he's up!");
-					view.printGame(game);
+					view.messageLog.addToCurrentMessage("and he's up!");
+					view.printGame(game, 2000);
 					game.getDefender().modifyKD1(game.getDefender().getKD2());
 					view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					// if not in Ring Center, move there and normalize CF and pinner/pinned
 					if (!game.getRingPosition().equals("Ring Center")) {
 						game.setRingPosition("Ring Center");
@@ -588,29 +621,36 @@ public class App {
 						game.setPinner(null);
 						game.setPinned(null);
 						view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				case "K1-10":
 					card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
 					kor = card.getKOR();
 					if (kor <= 10) {
-						view.messageLog.addToLog("1, 2, 3, 4, 5, 6, 7, 8, 9, 10! Knockout!");
+						view.messageLog.addToLog("");
+						for (int i = 1; i <= 9; i++) {
+							view.messageLog.addToCurrentMessage(i + "... ");
+							view.printGame(game, 1000);
+						}
+						view.messageLog.addToCurrentMessage("10! Knockout!");
+						view.printGame(game, 2000);
 						endGame(game, game.getAttacker(), "knockout");
 						return;
 					} else {
 						card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
 						game.getDefender().addKnockdown();
 						game.getDefender().addKDC(card.getKDC());
+						view.messageLog.addToLog("");
 						for (int i = 1; i <= card.getKDC(); i++) {
-							count += i + ", ";
+							view.messageLog.addToCurrentMessage(i + "... ");
+							view.printGame(game, 1000);
 						}
-						count = count.substring(0, count.length() - 2);
-						view.messageLog.addToLog(count + "... and he's up!");
-						view.printGame(game);
+						view.messageLog.addToCurrentMessage("and he's up!");
+						view.printGame(game, 2000);
 						game.getDefender().modifyKD1(game.getDefender().getKD2());
 						view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
 							game.setRingPosition("Ring Center");
@@ -619,34 +659,47 @@ public class App {
 							game.setPinner(null);
 							game.setPinned(null);
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
-							view.printGame(game);
+							view.printGame(game, 2000);
 						}
 					}
 					break;
 				case "K":
-					view.messageLog.addToLog("1, 2, 3, 4, 5, 6, 7, 8, 9, 10! Knockout!");
+					view.messageLog.addToLog("");
+					for (int i = 1; i <= 9; i++) {
+						view.messageLog.addToCurrentMessage(i + "... ");
+						view.printGame(game, 1000);
+					}
+					view.messageLog.addToCurrentMessage("10! Knockout!");
+					view.printGame(game, 2000);
 					endGame(game, game.getAttacker(), "knockout");
 					return;
 				case "*":
 					card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
 					kor = card.getKOR();
 					if (kor == 1) {
-						view.messageLog.addToLog("1, 2, 3, 4, 5, 6, 7, 8, 9, 10! Knockout!");
+						view.messageLog.addToLog("");
+						for (int i = 1; i <= 9; i++) {
+							view.messageLog.addToCurrentMessage(i + "... ");
+							view.printGame(game, 1000);
+						}
+						view.messageLog.addToCurrentMessage("10! Knockout!");
+						view.printGame(game, 2000);
 						endGame(game, game.getAttacker(), "knockout");
 						return;
 					} else {
 						card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
 						game.getDefender().addKnockdown();
 						game.getDefender().addKDC(card.getKDC());
+						view.messageLog.addToLog("");
 						for (int i = 1; i <= card.getKDC(); i++) {
-							count += i + ", ";
+							view.messageLog.addToCurrentMessage(i + "... ");
+							view.printGame(game, 1000);
 						}
-						count = count.substring(0, count.length() - 2);
-						view.messageLog.addToLog(count + "... and he's up!");
-						view.printGame(game);
+						view.messageLog.addToCurrentMessage("and he's up!");
+						view.printGame(game, 2000);
 						game.getDefender().modifyKD1(game.getDefender().getKD2());
 						view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						// if not in Ring Center, move there and normalize CF and pinner/pinned
 						if (!game.getRingPosition().equals("Ring Center")) {
 							game.setRingPosition("Ring Center");
@@ -655,7 +708,7 @@ public class App {
 							game.setPinner(null);
 							game.setPinned(null);
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
-							view.printGame(game);
+							view.printGame(game, 2000);
 						}
 					}
 					break;
@@ -665,12 +718,12 @@ public class App {
 	
 	public static void punchesMissed(Game game) {
 		view.messageLog.addToLog(game.getAttacker().getName()+ " misses...");
-		view.printGame(game);
+		view.printGame(game, 2000);
 	}
 	
 	public static void counterpunch(Game game) {
 		view.messageLog.addToLog(game.getAttacker().getName() + " misses... and opens himself up for a counterattack!");
-		view.printGame(game);
+		view.printGame(game, 2000);
 		Deck deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 		if (!deck.isEmpty()) {
 			int rn = deck.drawCard().getRN();
@@ -690,14 +743,14 @@ public class App {
 			} else {
 				// punch misses
 				view.messageLog.addToLog(game.getDefender().getName() + " misses...");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 	}
 	
 	public static void clinching(Game game) {
 		view.messageLog.addToLog(game.getAttacker().getName() + " clinches.");
-		view.printGame(game);
+		view.printGame(game, 2000);
 	}
 	
 	public static void ringMovement(Game game) {
@@ -747,7 +800,7 @@ public class App {
 				view.messageLog.addToLog(game.getAttacker().getName() + 
 						" pins " + game.getDefender().getName() + " to the " + game.getRingPosition() + "!");
 			}
-			view.printGame(game);
+			view.printGame(game, 2000);
 		}
 	}
 	
@@ -763,7 +816,7 @@ public class App {
 		// create the KI stack from cards in the active deck
 		game.setKIStack(new Deck(game.getActiveDeck().drawStack(cards)));
 		view.messageLog.addToLog(game.getAttacker().getName() + " goes in for the kill!");
-		view.printGame(game);
+		view.printGame(game, 2000);
 	}
 	
 	public static void tkoCheck(Game game) {
@@ -788,7 +841,7 @@ public class App {
 		}
 		if (winner != null) {
 			view.messageLog.addToLog(game.getOpponentOf(winner).getName() + " is unable to continue!");
-			view.printGame(game);
+			view.printGame(game, 2000);
 			endGame(game, winner, "technical knockout");
 		}
 	}
@@ -840,7 +893,7 @@ public class App {
 				} else {
 					view.messageLog.addToLog(game.getDefender().getName() + " suffers some " + type.toLowerCase() + "!");
 				}
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 			
 			// check if defender has taken enough damage to trigger a doctor check or TKO
@@ -851,7 +904,7 @@ public class App {
 						if (!deck.isEmpty() ) {
 							if (game.getDefender().getDamage() <= 15) {
 								view.messageLog.addToLog("The referee considers calling the doctor over to take a look at " + game.getDefender().getName() + ".");
-								view.printGame(game);
+								view.printGame(game, 2000);
 								cf = game.getInactiveDeck().drawAndReturn().getResult();
 								int performDoctorCheck = 0;
 								switch (game.getReferee().getFouls()) {
@@ -887,7 +940,7 @@ public class App {
 	
 	public static void doctorCheck(Game game, Fighter fighter) {
 		view.messageLog.addToLog("The referee calls the doctor over to take a look at " + fighter.getName() + ".");
-		view.printGame(game);
+		view.printGame(game, 2000);
 		Deck deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 		if (!deck.isEmpty()) {
 			int cf = deck.drawCard().getCF();
@@ -916,7 +969,7 @@ public class App {
 				} else {
 					view.messageLog.addToLog("The doctor will still end the fight early after Round " + game.getFinalRoundNumber() + ".");
 				}
-				view.printGame(game);
+				view.printGame(game, 2000);
 			} else if (cf <= oneMoreRound) {
 				if (game.getFinalRoundNumber() == options.getMaxRounds()) {
 					game.setFinalRoundNumber(game.getRoundNumber() + 1);
@@ -924,10 +977,10 @@ public class App {
 				} else {
 					view.messageLog.addToLog("The doctor will still end the fight early after Round " + game.getFinalRoundNumber() + ".");
 				}
-				view.printGame(game);
+				view.printGame(game, 2000);
 			} else {
 				view.messageLog.addToLog("The doctor stops the bout! " + fighter.getName() + " is too hurt to continue!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 				endGame(game, game.getOpponentOf(fighter), "technical knockout");
 			}
 		}
@@ -937,7 +990,7 @@ public class App {
 		Deck deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 		if (!deck.isEmpty()) {
 			view.messageLog.addToLog(game.getAttacker().getName() + " may have committed a foul...");
-			view.printGame(game);
+			view.printGame(game, 2000);
 			
 			// set RN thresholds based on referee's Foul Rating
 			int modifier = 0;
@@ -971,7 +1024,7 @@ public class App {
 			if (!foul.equals("tells both fighters to keep it clean")) {
 				game.getAttacker().addWarning();
 				view.messageLog.addToLog("The referee stops the action and issues a stern warning " + foul + "!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 				
 				deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 				
@@ -980,17 +1033,17 @@ public class App {
 					if (card.getRN() <= pointLossNum) {
 						game.getAttacker().addPointLost();
 						view.messageLog.addToLog("The referee takes a point away from " + game.getAttacker().getName() + "!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					} else {
 						view.messageLog.addToLog("The referee disqualifies " + game.getAttacker().getName() + "!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						endGame(game, game.getDefender(), "disqualification");
 						return;
 					}
 				}
 			} else {
 				view.messageLog.addToLog("The referee is gesturing. He " + foul + "!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 	}
@@ -999,14 +1052,14 @@ public class App {
 		Deck deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 		if (!deck.isEmpty()) {
 			view.messageLog.addToLog(game.getAttacker().getName() + " may have suffered a serious injury...");
-			view.printGame(game);
+			view.printGame(game, 2000);
 			int injury = deck.drawCard().getInjury();
 			deck = game.isInKI() && !game.getKIStack().isEmpty() ? game.getKIStack() : game.getActiveDeck();
 			switch (injury) {
 				// no injury
 				case 0:
 					view.messageLog.addToLog("Thankfully, no injury occurs.");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighters clash heads, random fighter loses 1CF
@@ -1023,7 +1076,7 @@ public class App {
 						fighter.modifyCFS(-1);
 						fighter.addInjury(injury);
 						view.messageLog.addToLog("The two fighters clash heads! " + game.getAttacker().getName() + " suffers a bad gash!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1033,11 +1086,11 @@ public class App {
 						game.getDefender().scorePoints(3);
 						game.getAttacker().addInjury(injury);
 						view.messageLog.addToLog(game.getAttacker().getName() + " takes a huge body shot! He might have broken a rib!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						tkoCheck(game);
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1058,7 +1111,7 @@ public class App {
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter walks into a 2-point counter that breaks their nose, lowering END by 5 each round
@@ -1067,11 +1120,11 @@ public class App {
 						game.getDefender().scorePoints(2);
 						game.getAttacker().addInjury(injury);
 						view.messageLog.addToLog(game.getAttacker().getName() + " walks into a hard counter! His nose is broken!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						tkoCheck(game);
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1081,11 +1134,11 @@ public class App {
 						game.getAttacker().scorePoints(2);
 						game.getAttacker().addInjury(injury);
 						view.messageLog.addToLog(game.getAttacker().getName() + " lands a solid jab... but he injures his hand!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						tkoCheck(game);
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1095,11 +1148,11 @@ public class App {
 						game.getAttacker().scorePoints(4);
 						game.getAttacker().addInjury(injury);
 						view.messageLog.addToLog(game.getAttacker().getName() + " lands a wicked shot... but he breaks his hand!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						tkoCheck(game);
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1109,11 +1162,11 @@ public class App {
 						game.getAttacker().scorePoints(3);
 						game.getAttacker().addInjury(injury);
 						view.messageLog.addToLog(game.getAttacker().getName() + " lands a hard shot... but he injures his hand!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						tkoCheck(game);
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1123,11 +1176,11 @@ public class App {
 						game.getDefender().scorePoints(3);
 						game.getAttacker().addInjury(injury);
 						view.messageLog.addToLog(game.getAttacker().getName() + " eats a punch to the side of the jaw! His jaw is broken!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 						tkoCheck(game);
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1139,7 +1192,7 @@ public class App {
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter twists ankle, immediately checking if they become a slugger if not a slugger, gaining 2KP and lose 1CF
@@ -1164,7 +1217,7 @@ public class App {
 					} else {
 						view.messageLog.addToLog("Thankfully, no further injury occurs.");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 			}
 		}
@@ -1182,7 +1235,7 @@ public class App {
 						fighter.modifyEND(5);
 					}
 					view.messageLog.addToLog("The referee halts the fight to have water in a corner sponged up. The fighters take a moment to recover.");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// if fighter has Anger Issues and a Foul Rating of D or E, they bite their opponent and the referee takes away a point
@@ -1195,7 +1248,7 @@ public class App {
 					} else {
 						view.messageLog.addToLog(game.getAttacker().getName() + " gets mad... but he's able to keep it down.");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter loses mouthpiece, each fighter gains 5 END
@@ -1205,14 +1258,14 @@ public class App {
 					}
 					view.messageLog.addToLog(game.getAttacker().getName() + " loses his mouthpiece. The referee halts the fight to clean and reinsert it.");
 					view.messageLog.addToLog("The fighters take a moment to recover.");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter complains and gets hit with a 3-point hook
 				case 4:
 					game.getDefender().scorePoints(3);
 					view.messageLog.addToLog(game.getAttacker().getName() + " turns to complain to the referee... and gets hit with a left hook!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					tkoCheck(game);
 					break;
 				
@@ -1232,7 +1285,7 @@ public class App {
 						game.getFighter1().scorePoints(2);
 						view.messageLog.addToLog("The fighters exchange punches... and " + game.getFighter2().getName() + " comes out on top!");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					tkoCheck(game);
 					break;
 				
@@ -1240,17 +1293,17 @@ public class App {
 				case 6:
 					game.getDefender().modifyEND(-4);
 					view.messageLog.addToLog(game.getFighter1().getName() + " hits his opponent on the break!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					game.getAttacker().addSpecial6();
 					if (game.getAttacker().getSpecial6() == 2) {
 						game.getAttacker().addWarning();
 						view.messageLog.addToLog("The referee issues a stern warning!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					} else if(game.getAttacker().getSpecial6() == 3) {
 						game.getAttacker().addWarning();
 						game.getAttacker().addPointLost();
 						view.messageLog.addToLog("The referee takes a point away from " + game.getAttacker().getName() + "!");
-						view.printGame(game);
+						view.printGame(game, 2000);
 					}
 					break;
 				
@@ -1266,7 +1319,7 @@ public class App {
 						view.messageLog.addToLog("The tape on " + game.getAttacker().getName()
 								+ "'s glove needs to be repaired... but the fight is too intense to stop!");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter's glove splits, each fighter gains 10 END, KI ends if in progress
@@ -1280,7 +1333,7 @@ public class App {
 						game.getActiveDeck().returnStack(game.getKIStack());
 						view.messageLog.addToLog(game.getAttacker().getName() + " calms down a bit.");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// round ends early, only happens if 5 or fewer cards remain
@@ -1300,7 +1353,7 @@ public class App {
 					} else {
 						view.messageLog.addToLog("Nothing seems to happen...");
 					}
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter breaks ropes, each fighter gains 15 END
@@ -1311,7 +1364,7 @@ public class App {
 					view.messageLog.addToLog(game.getAttacker().getName() + " leans into the ropes, and they give way!"
 							+ " The fight is halted to tighten them.");
 					view.messageLog.addToLog("The fighters take a moment to recover.");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fighter hits referee with a punch out of a clinch, each fighter gains 10 END
@@ -1322,7 +1375,7 @@ public class App {
 					view.messageLog.addToLog(game.getAttacker().getName() + " knocks down the referee with a punch out of a clinch!"
 							+ " The fight is temporarily halted.");
 					view.messageLog.addToLog("The fighters take a moment to recover.");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 				
 				// fans toss debris into ring, each fighter gains 5 END
@@ -1332,7 +1385,7 @@ public class App {
 					}
 					view.messageLog.addToLog("Unruly fans throw debris into the ring! The fight is temporarily halted.");
 					view.messageLog.addToLog("The fighters take a moment to recover.");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					break;
 			}
 		}
@@ -1386,28 +1439,28 @@ public class App {
 			fighter.setCondition(condition);
 			if (fighter.getCFB() > oldCFB) {
 				view.messageLog.addToLog(fighter.getName() + "'s focus returns!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 			if (fighter.getCFB() < oldCFB) {
 				view.messageLog.addToLog(fighter.getName() + " loses focus from the intense punishment this round!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 			if (fighter.getDEF() < oldDEF) {
 				view.messageLog.addToLog(fighter.getName() + "'s defenses are back up!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 			if (fighter.getDEF() > oldDEF) {
 				if (!fighter.isCondition3()) {
 					view.messageLog.addToLog(fighter.getName() + "'s defenses are down from the intense punishment this round!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 				} else {
 					view.messageLog.addToLog(fighter.getName() + "'s defenses are shattered from the intense punishment this round!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 				}
 			}
 			if (fighter.getDEF() == oldDEF && !oldCondition3  && fighter.isCondition3()) {
 				view.messageLog.addToLog(fighter.getName() + "'s already-lowered defenses are shattered from the intense punishment this round!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 	}
@@ -1418,7 +1471,7 @@ public class App {
 		}
 		
 		view.messageLog.addToLog("DING DING DING! Round " + game.getRoundNumber() + " is over!");
-		view.printGame(game);
+		view.printGame(game, 2000);
 		
 		// reshuffle active deck
 		game.getActiveDeck().shuffleDeck();
@@ -1439,7 +1492,7 @@ public class App {
 			if (fighter.getInjuries().contains(8) && !fighter.isResolvedInjury8()) {
 				if (game.getInactiveDeck().drawAndReturn().getRN() <= 40) {
 					view.messageLog.addToLog(fighter.getName() + " is unable to continue due to his broken jaw!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					if (winner != null) {
 						endGame(game, null, "draw");
 						return;
@@ -1450,7 +1503,7 @@ public class App {
 					fighter.modifyCFB(-2);
 					fighter.modifyCFS(-2);
 					view.messageLog.addToLog(fighter.getName() + " is feeling the hurt from his broken jaw... but he can keep going!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 				}
 				fighter.setResolvedInjury8(true);
 			}
@@ -1463,7 +1516,7 @@ public class App {
 			if (fighter.getInjuries().contains(9) && !fighter.isResolvedInjury9()) {
 				if (game.getInactiveDeck().drawAndReturn().getRN() <= 16) {
 					view.messageLog.addToLog(fighter.getName() + " is unable to continue due to the pulled muscle in his shoulder!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 					if (winner != null) {
 						endGame(game, null, "draw");
 						return;
@@ -1474,7 +1527,7 @@ public class App {
 					fighter.modifyCFB(-1);
 					fighter.modifyCFS(-1);
 					view.messageLog.addToLog(fighter.getName() + " is feeling the hurt from the pulled muscle in his shoulder... but he can keep going!");
-					view.printGame(game);
+					view.printGame(game, 2000);
 				}
 				fighter.setResolvedInjury9(true);
 			}
@@ -1491,7 +1544,7 @@ public class App {
 				view.messageLog.addToLog(fighter.getName() + " is getting tired!");
 				fighter.setFresh(false);
 				fighter.zeroEND();
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 			conditionCheck(game, fighter);
 		}
@@ -1584,7 +1637,7 @@ public class App {
 							"'s " + cut.getCutType().toLowerCase() + ".");
 				}
 				fighter.modifyDamage(-reductionAmount);
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 		
@@ -1603,10 +1656,10 @@ public class App {
 			fighter.modifyKD1(-fighter.getKD2() * fighter.getKnockdowns());
 			if (!oldCarryover && fighter.isCarryover()) {
 				view.messageLog.addToLog(fighter.getName() + " is suffering from the aftereffects of his knockdown(s)!");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			} else if (oldCarryover && !fighter.isCarryover()) {
 				view.messageLog.addToLog(fighter.getName() + " has recovered from the aftereffects of his earlier knockdown(s).");
-				view.printGame(game);
+				view.printGame(game, 2000);
 			}
 		}
 		
@@ -1826,7 +1879,7 @@ public class App {
 				view.messageLog.addToLog("Judge " + judge + " scores Round " + game.getRoundNumber() + " " + fighter1Score + "-" + fighter2Score + ".");
 			}
 		}
-		view.printGame(game);
+		view.printGame(game, 2000);
 		
 		// reset stats
 		for (Fighter fighter : game.getFighters()) {
@@ -1843,7 +1896,7 @@ public class App {
 			} else {
 				view.messageLog.addToLog("The doctor ends the fight early. The fight is over!");
 			}
-			view.printGame(game);
+			view.printGame(game, 2000);
 			int fighter1Judges = 0, fighter2Judges = 0, drawJudges = 0;
 			for (int judge = 1; judge <= 3; judge++) {
 				int score = 0;
@@ -1876,9 +1929,9 @@ public class App {
 			} else if (fighter1Judges == 1 && fighter2Judges == 1 && drawJudges == 1) {
 				endGame(game, null, "draw");
 			}
+		} else {
+			game.incrementRoundNumber();
 		}
-		
-		game.incrementRoundNumber();
 	}
 	
 	public static void endGame(Game game, Fighter winner, String outcome) {
@@ -1888,7 +1941,12 @@ public class App {
 		} else {
 			view.messageLog.addToLog(winner.getName() + " has won in round " + game.getRoundNumber() + " by " + outcome + "!");
 		}
-		view.printGame(game);
+		view.printGame(game, 2000);
+		view.messageLog.addToLog("");
+		view.messageLog.addToLog("Press Enter to return to the main menu.");
+		view.printGame(game, 0);
+		in.next();
+		view.messageLog.clearLog();
 	}
 	
 	public static void divisionsMenu() {
@@ -2123,7 +2181,7 @@ public class App {
 		boolean done = false;
 		XSSFSheet cutMen = workbook.getSheet("Standard Corner Men");
 		while (!done) {
-			view.printStandardCutManSelection(1);
+			view.printStandardCutManSelection(fighter1.getCell(0).getStringCellValue(), 1);
 			int i = in.nextInt();
 			if (i > 0 && i <= cutMen.getLastRowNum()) {
 				Row cutMan1 = cutMen.getRow(i);
@@ -2150,7 +2208,7 @@ public class App {
 			}
 			hasNextPage = cutManGroup.size() == 25 && offset + cutManGroup.size() < cutMen.getLastRowNum();
 			hasPreviousPage = pageNumber > 1;
-			view.printRatedCutManSelection(1, cutManGroup, hasNextPage, hasPreviousPage);
+			view.printRatedCutManSelection(fighter1.getCell(0).getStringCellValue(), 1, cutManGroup, hasNextPage, hasPreviousPage);
 			int i = in.nextInt() - 1;
 			if (i > -1 && i < cutManGroup.size()) {
 				boolean done2 = false;
@@ -2199,7 +2257,7 @@ public class App {
 		boolean done = false;
 		XSSFSheet trainers = workbook.getSheet("Standard Corner Men");
 		while (!done) {
-			view.printStandardTrainerSelection(1);
+			view.printStandardTrainerSelection(fighter1.getCell(0).getStringCellValue(), 1);
 			int i = in.nextInt();
 			if (i > 0 && i <= trainers.getLastRowNum()) {
 				Row trainer1 = trainers.getRow(i);
@@ -2226,7 +2284,7 @@ public class App {
 			}
 			hasNextPage = trainerGroup.size() == 25 && offset + trainerGroup.size() < trainers.getLastRowNum();
 			hasPreviousPage = pageNumber > 1;
-			view.printRatedTrainerSelection(1, trainerGroup, hasNextPage, hasPreviousPage);
+			view.printRatedTrainerSelection(fighter1.getCell(0).getStringCellValue(), 1, trainerGroup, hasNextPage, hasPreviousPage);
 			int i = in.nextInt() - 1;
 			if (i > -1 && i < trainerGroup.size()) {
 				boolean done2 = false;
@@ -2275,7 +2333,7 @@ public class App {
 		boolean done = false;
 		XSSFSheet cutMen = workbook.getSheet("Standard Corner Men");
 		while (!done) {
-			view.printStandardCutManSelection(2);
+			view.printStandardCutManSelection(fighter2.getCell(0).getStringCellValue(), 2);
 			int i = in.nextInt();
 			if (i > 0 && i <= cutMen.getLastRowNum()) {
 				Row cutMan2 = cutMen.getRow(i);
@@ -2302,7 +2360,7 @@ public class App {
 			}
 			hasNextPage = cutManGroup.size() == 25 && offset + cutManGroup.size() < cutMen.getLastRowNum();
 			hasPreviousPage = pageNumber > 1;
-			view.printRatedCutManSelection(2, cutManGroup, hasNextPage, hasPreviousPage);
+			view.printRatedCutManSelection(fighter2.getCell(0).getStringCellValue(), 2, cutManGroup, hasNextPage, hasPreviousPage);
 			int i = in.nextInt() - 1;
 			if (i > -1 && i < cutManGroup.size()) {
 				boolean done2 = false;
@@ -2351,7 +2409,7 @@ public class App {
 		boolean done = false;
 		XSSFSheet trainers = workbook.getSheet("Standard Corner Men");
 		while (!done) {
-			view.printStandardTrainerSelection(2);
+			view.printStandardTrainerSelection(fighter2.getCell(0).getStringCellValue(), 2);
 			int i = in.nextInt();
 			if (i > 0 && i <= trainers.getLastRowNum()) {
 				Row trainer2 = trainers.getRow(i);
@@ -2378,7 +2436,7 @@ public class App {
 			}
 			hasNextPage = trainerGroup.size() == 25 && offset + trainerGroup.size() < trainers.getLastRowNum();
 			hasPreviousPage = pageNumber > 1;
-			view.printRatedTrainerSelection(2, trainerGroup, hasNextPage, hasPreviousPage);
+			view.printRatedTrainerSelection(fighter2.getCell(0).getStringCellValue(), 2, trainerGroup, hasNextPage, hasPreviousPage);
 			int i = in.nextInt() - 1;
 			if (i > -1 && i < trainerGroup.size()) {
 				boolean done2 = false;
@@ -2590,66 +2648,69 @@ public class App {
 					selectOption("NumberOfRounds");
 					break;
 				case 2:
-					selectOption("Injuries");
+					selectOption("ERatingSelectionFrequency");
 					break;
 				case 3:
-					selectOption("CFConversion");
+					selectOption("Injuries");
 					break;
 				case 4:
-					selectOption("Aggressiveness");
+					selectOption("CFConversion");
 					break;
 				case 5:
-					selectOption("FoulDamage");
+					selectOption("Aggressiveness");
 					break;
 				case 6:
-					selectOption("FoulTableHeadButt");
+					selectOption("FoulDamage");
 					break;
 				case 7:
-					selectOption("AdvancedTiming");
+					selectOption("FoulTableHeadButt");
 					break;
 				case 8:
-					selectOption("CardUsageToExtendTheRound");
+					selectOption("AdvancedTiming");
 					break;
 				case 9:
-					selectOption("MandatoryEightCount");
+					selectOption("CardUsageToExtendTheRound");
 					break;
 				case 10:
-					selectOption("SavedByTheBell");
+					selectOption("MandatoryEightCount");
 					break;
 				case 11:
-					selectOption("ThreeKnockdownRule");
+					selectOption("SavedByTheBell");
 					break;
 				case 12:
-					selectOption("Southpaw");
+					selectOption("ThreeKnockdownRule");
 					break;
 				case 13:
-					selectOption("MissingPunchesPenalty");
+					selectOption("Southpaw");
 					break;
 				case 14:
-					selectOption("KillerInstinctAndRoundTiming");
+					selectOption("MissingPunchesPenalty");
 					break;
 				case 15:
-					selectOption("AdvancedClinching");
+					selectOption("KillerInstinctAndRoundTiming");
 					break;
 				case 16:
-					selectOption("RatedReferee");
+					selectOption("AdvancedClinching");
 					break;
 				case 17:
-					selectOption("RatedCornerMen");
+					selectOption("RatedReferee");
 					break;
 				case 18:
-					selectOption("RefereeErrorTable");
+					selectOption("RatedCornerMen");
 					break;
 				case 19:
-					selectOption("Strategies");
+					selectOption("RefereeErrorTable");
 					break;
 				case 20:
-					selectOption("FighterTraits");
+					selectOption("Strategies");
 					break;
 				case 21:
-					selectOption("ThrowInTheTowel");
+					selectOption("FighterTraits");
 					break;
 				case 22:
+					selectOption("ThrowInTheTowel");
+					break;
+				case 23:
 					done = true;
 					break;
 			}
@@ -2677,6 +2738,22 @@ public class App {
 							done = true;
 							break;
 						case 4:
+							done = true;
+							break;
+					}
+					break;
+				case "ERatingSelectionFrequency":
+					view.printOptionSelect(option, options.getOption(option), new String[] { "PerTurn", "PerRound" });
+					switch (in.nextInt()) {
+						case 1:
+							options.setAdvancedTimingOption("PerTurn");
+							done = true;
+							break;
+						case 2:
+							options.setAdvancedTimingOption("PerRound");
+							done = true;
+							break;
+						case 3:
 							done = true;
 							break;
 					}
@@ -3017,6 +3094,7 @@ public class App {
 		// if options.ini has invalid options, fixes that
 		String[] options = new String[] {
 				"NumberOfRounds",
+				"ERatingSelectionFrequency",
 				"Injuries",
 				"CFConversion",
 				"Aggressiveness",
@@ -3069,6 +3147,7 @@ public class App {
 		// if options.ini is missing options or has invalid values, fixes that
 		Map<String, String> options = new HashMap<>();
 		options.put("NumberOfRounds", "12");
+		options.put("ERatingSelectionFrequency", "PerTurn");
 		options.put("Injuries", "True");
 		options.put("CFConversion", "True");
 		options.put("Aggressiveness", "False");
@@ -3109,6 +3188,11 @@ public class App {
 							break;
 						}
 						if (option.equals("NumberOfRounds") && !lineArr[1].equals("10") && !lineArr[1].equals("12") && !lineArr[1].equals("15")) {
+							linesIterator.remove();
+							newLines.add(option + "=" + options.get(option));
+							break;
+						}
+						if (option.equals("ERatingSelectionFrequency") && !lineArr[1].equals("PerTurn") && !lineArr[1].equals("PerRound")) {
 							linesIterator.remove();
 							newLines.add(option + "=" + options.get(option));
 							break;

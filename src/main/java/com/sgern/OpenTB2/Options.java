@@ -12,6 +12,7 @@ import java.util.List;
 public class Options {
 	
 	private int maxRounds;
+	private String eRatingSelectionFrequency;
 	private boolean injuriesEnabled;
 	private boolean cfConversionEnabled;
 	private boolean aggressivenessEnabled;
@@ -82,6 +83,7 @@ public class Options {
 	
 	public Options() {
 		maxRounds = Integer.parseInt(getOption("NumberOfRounds"));
+		eRatingSelectionFrequency = getOption("ERatingSelectionFrequency");
 		injuriesEnabled = Boolean.parseBoolean(getOption("Injuries"));
 		cfConversionEnabled = Boolean.parseBoolean(getOption("CFConversion"));
 		aggressivenessEnabled = Boolean.parseBoolean(getOption("Aggressiveness"));
@@ -111,6 +113,15 @@ public class Options {
 	public void setMaxRounds(int maxRounds) {
 		this.maxRounds = maxRounds;
 		setOption("NumberOfRounds", Integer.toString(maxRounds));
+	}
+	
+	public String getERatingSelectionFrequency() {
+		return eRatingSelectionFrequency;
+	}
+
+	public void setERatingSelectionFrequency(String eRatingSelectionFrequency) {
+		this.eRatingSelectionFrequency = eRatingSelectionFrequency;
+		setOption("ERatingSelectionFrequency", eRatingSelectionFrequency);
 	}
 
 	public boolean isInjuriesEnabled() {

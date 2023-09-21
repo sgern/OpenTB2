@@ -68,27 +68,28 @@ public class AppView {
 	public void printOptions(Options options) {
 		clearScreen();
 		System.out.println("(1) Number of Rounds:\t\t\t" + options.getMaxRounds());
-		System.out.println("(2) Injuries:\t\t\t\t" + formatBoolean(options.isInjuriesEnabled()));
-		System.out.println("(3) CF Conversion:\t\t\t" + formatBoolean(options.isCFConversionEnabled()));
-		System.out.println("(4) Aggressiveness:\t\t\t" + formatBoolean(options.isAggressivenessEnabled()));
-		System.out.println("(5) Damage Sustained From a Foul:\t" + formatBoolean(options.isFoulDamageEnabled()));
-		System.out.println("(6) Foul Table Head Butt:\t\t" + formatBoolean(options.isHeadbuttCutEnabled()));
-		System.out.println("(7) Advanced Timing:\t\t\t" + options.getAdvancedTimingOption());
-		System.out.println("(8) Card Usage to Extend the Round:\t" + formatBoolean(options.isExtendRoundEnabled()));
-		System.out.println("(9) Mandatory 8-Count:\t\t\t" + formatBoolean(options.isMandatoryEightCountEnabled()));
-		System.out.println("(10) Saved by the Bell:\t\t\t" + formatBoolean(options.isSavedByTheBellEnabled()));
-		System.out.println("(11) Three-Knockdown Rule:\t\t" + formatBoolean(options.isThreeKnockdownRuleEnabled()));
-		System.out.println("(12) Southpaw:\t\t\t\t" + formatBoolean(options.isSouthpawEnabled()));
-		System.out.println("(13) Missing Punches Penalty:\t\t" + formatBoolean(options.isMissPenaltyEnabled()));
-		System.out.println("(14) Killer Instinct and Round Timing:\t" + formatBoolean(options.isKITimingEnabled()));
-		System.out.println("(15) Advanced Clinching:\t\t" + formatBoolean(options.isAdvancedClinchingEnabled()));
-		System.out.println("(16) Rated Referee:\t\t\t" + formatBoolean(options.isRatedRefereeEnabled()));
-		System.out.println("(17) Rated Corner Men:\t\t\t" + formatBoolean(options.isRatedCornerMenEnabled()));
-		System.out.println("(18) Referee Error Table:\t\t" + options.getRefereeErrorOption());
-		System.out.println("(19) Strategies:\t\t\t" + formatBoolean(options.isStrategiesEnabled()));
-		System.out.println("(20) Fighter Traits:\t\t\t" + formatBoolean(options.isFighterTraitsEnabled()));
-		System.out.println("(21) Throw in the Towel:\t\t" + formatBoolean(options.isThrowInTheTowelEnabled()));
-		System.out.println("(22) Exit");
+		System.out.println("(2) (E) Rating Selection Frequency:\t\t\t" + options.getERatingSelectionFrequency());
+		System.out.println("(3) Injuries:\t\t\t\t" + formatBoolean(options.isInjuriesEnabled()));
+		System.out.println("(4) CF Conversion:\t\t\t" + formatBoolean(options.isCFConversionEnabled()));
+		System.out.println("(5) Aggressiveness:\t\t\t" + formatBoolean(options.isAggressivenessEnabled()));
+		System.out.println("(6) Damage Sustained From a Foul:\t" + formatBoolean(options.isFoulDamageEnabled()));
+		System.out.println("(7) Foul Table Head Butt:\t\t" + formatBoolean(options.isHeadbuttCutEnabled()));
+		System.out.println("(8) Advanced Timing:\t\t\t" + options.getAdvancedTimingOption());
+		System.out.println("(9) Card Usage to Extend the Round:\t" + formatBoolean(options.isExtendRoundEnabled()));
+		System.out.println("(10) Mandatory 8-Count:\t\t\t" + formatBoolean(options.isMandatoryEightCountEnabled()));
+		System.out.println("(11) Saved by the Bell:\t\t\t" + formatBoolean(options.isSavedByTheBellEnabled()));
+		System.out.println("(12) Three-Knockdown Rule:\t\t" + formatBoolean(options.isThreeKnockdownRuleEnabled()));
+		System.out.println("(13) Southpaw:\t\t\t\t" + formatBoolean(options.isSouthpawEnabled()));
+		System.out.println("(14) Missing Punches Penalty:\t\t" + formatBoolean(options.isMissPenaltyEnabled()));
+		System.out.println("(15) Killer Instinct and Round Timing:\t" + formatBoolean(options.isKITimingEnabled()));
+		System.out.println("(16) Advanced Clinching:\t\t" + formatBoolean(options.isAdvancedClinchingEnabled()));
+		System.out.println("(17) Rated Referee:\t\t\t" + formatBoolean(options.isRatedRefereeEnabled()));
+		System.out.println("(18) Rated Corner Men:\t\t\t" + formatBoolean(options.isRatedCornerMenEnabled()));
+		System.out.println("(19) Referee Error Table:\t\t" + options.getRefereeErrorOption());
+		System.out.println("(20) Strategies:\t\t\t" + formatBoolean(options.isStrategiesEnabled()));
+		System.out.println("(21) Fighter Traits:\t\t\t" + formatBoolean(options.isFighterTraitsEnabled()));
+		System.out.println("(22) Throw in the Towel:\t\t" + formatBoolean(options.isThrowInTheTowelEnabled()));
+		System.out.println("(23) Exit");
 	}
 	
 	public void printOptionSelect(String option, String value, String[] values) {
@@ -117,7 +118,11 @@ public class AppView {
 		System.out.println("Select Fighter " + currentFighterNumber + ".");
 		int i = 1;
 		while (i <= fighterGroup.size()) {
-			System.out.println("(" + i + ")\t" + fighterGroup.get(i - 1).getCell(0));
+			String output = "(" + i + ")\t" + fighterGroup.get(i - 1).getCell(0);
+			if (fighterGroup.get(i - 1).getCell(1) != null) {
+				output += " (" + fighterGroup.get(i - 1).getCell(1).getStringCellValue() + ")";
+			}
+			System.out.println(output);
 			i++;
 		}
 		if (hasNextPage) {
@@ -356,9 +361,9 @@ public class AppView {
 		System.out.println("(2) Cancel");
 	}
 	
-	public void printStandardCutManSelection(int currentFighterNumber) {
+	public void printStandardCutManSelection(String name, int currentFighterNumber) {
 		clearScreen();
-		System.out.println("Select Cut Man Type for Fighter " + currentFighterNumber + ".");
+		System.out.println("Select Cut Man Type for " + name + " (Fighter " + currentFighterNumber + ").");
 		System.out.println("(1) Poor");
 		System.out.println("(2) Average");
 		System.out.println("(3) Good");
@@ -367,9 +372,9 @@ public class AppView {
 		System.out.println("(6) Cancel");
 	}
 	
-	public void printRatedCutManSelection(int currentFighterNumber, ArrayList<Row> cutManGroup, boolean hasNextPage, boolean hasPreviousPage) {
+	public void printRatedCutManSelection(String name, int currentFighterNumber, ArrayList<Row> cutManGroup, boolean hasNextPage, boolean hasPreviousPage) {
 		clearScreen();
-		System.out.println("Select Rated Cut Man for Fighter " + currentFighterNumber + ".");
+//		System.out.println("Select Rated Cut Man for " + name + " (Fighter " + currentFighterNumber + ").");
 		int i = 1;
 		while (i <= cutManGroup.size()) {
 			System.out.println("(" + i + ")\t" + cutManGroup.get(i - 1).getCell(0));
@@ -386,9 +391,9 @@ public class AppView {
 		System.out.println("(" + i + ")\tCancel");
 	}
 	
-	public void printStandardTrainerSelection(int currentFighterNumber) {
+	public void printStandardTrainerSelection(String name, int currentFighterNumber) {
 		clearScreen();
-		System.out.println("Select Trainer Type for Fighter " + currentFighterNumber + ".");
+		System.out.println("Select Trainer Type for " + name + " (Fighter " + currentFighterNumber + ").");
 		System.out.println("(1) Poor");
 		System.out.println("(2) Average");
 		System.out.println("(3) Good");
@@ -397,9 +402,9 @@ public class AppView {
 		System.out.println("(6) Cancel");
 	}
 	
-	public void printRatedTrainerSelection(int currentFighterNumber, ArrayList<Row> trainerGroup, boolean hasNextPage, boolean hasPreviousPage) {
+	public void printRatedTrainerSelection(String name, int currentFighterNumber, ArrayList<Row> trainerGroup, boolean hasNextPage, boolean hasPreviousPage) {
 		clearScreen();
-		System.out.println("Select Rated Trainer for Fighter " + currentFighterNumber + ".");
+		System.out.println("Select Rated Trainer for " + name + " (Fighter " + currentFighterNumber + ").");
 		int i = 1;
 		while (i <= trainerGroup.size()) {
 			System.out.println("(" + i + ")\t" + trainerGroup.get(i - 1).getCell(0));
@@ -446,7 +451,7 @@ public class AppView {
 		System.out.println("(2) No");
 	}
 	
-	public void printGame(Game game) {
+	public void printGame(Game game, int waitTimeMillis) {
 		clearScreen();
 		String output = "";
 		// 1
@@ -763,7 +768,7 @@ public class AppView {
 		output += StringUtils.center(game.getFighter2().getHook2() + 1 + "-" + game.getFighter2().getCross3(), 15);
 		output += StringUtils.center(game.getFighter2().getCross3() + 1 + "-" + game.getFighter2().getCross2(), 15);
 		System.out.print(output);
-		output = StringUtils.center("Referee: " + game.getReferee().getName(), 30);
+		output = StringUtils.center("Round " + game.getRoundNumber() + " of " + game.getFinalRoundNumber(), 30);
 		System.out.print(output);
 		System.out.println();
 		// 17
@@ -775,9 +780,9 @@ public class AppView {
 		output += StringUtils.center(game.getFighter2().getCross2() + 1 + "-" + game.getFighter2().getCombination3(), 15);
 		output += StringUtils.center(game.getFighter2().getCombination3() + 1 + "-" + game.getFighter2().getCombination2(), 15);
 		System.out.print(output);
-		String fouls = game.getReferee().getFouls().equals("Very Lenient") ? "V. L." : game.getReferee().getFouls();
-		String tko = game.getReferee().getStoppage().equals("Very Lenient") ? "V. L." : game.getReferee().getStoppage();
-		output = StringUtils.center("Fouls: " + fouls + ", TKO: " + tko, 30);
+		int minutes = (int) (3.6 * game.getActiveDeck().getCardsLeft() / 60);
+		int seconds = (int) (3.6 * game.getActiveDeck().getCardsLeft() % 60);
+		output = StringUtils.center(minutes + ":" + String.format("%02d", seconds), 30);
 		System.out.print(output);
 		System.out.println();
 		// 18
@@ -788,6 +793,57 @@ public class AppView {
 		output = StringUtils.rightPad("Uppercut: ", 15);
 		output += StringUtils.center(game.getFighter2().getCombination2() + 1 + "-" + game.getFighter2().getUppercut3(), 15);
 		output += StringUtils.center(game.getFighter2().getUppercut3() + 1 + "-" + 80, 15);
+		System.out.print(output);
+		System.out.println();
+		// 19
+		output = StringUtils.center("FIGHTER", 22);
+		output += StringUtils.center("J#", 4);
+		for (int i = 1; i <= 15; i++) {
+			output += StringUtils.center(i + "", 4);
+		}
+		output += StringUtils.center("T", 4);
+		System.out.print(output);
+		output = StringUtils.center("Referee: " + game.getReferee().getName(), 30);
+		System.out.print(output);
+		System.out.println();
+		// 20
+		output = StringUtils.center("", 22);
+		output += StringUtils.center("J1", 4);
+		int sum = 0;
+		for (int i = 0; i <= 14; i++) {
+			output += StringUtils.center(game.getFighter1().getScore()[0][i] + "", 4);
+			sum += game.getFighter1().getScore()[0][i];
+		}
+		output += StringUtils.center(sum + "", 4);
+		output = output.replace(" 0 ", "   ");
+		System.out.print(output);
+		String fouls = game.getReferee().getFouls().equals("Very Lenient") ? "V. L." : game.getReferee().getFouls();
+		String tko = game.getReferee().getStoppage().equals("Very Lenient") ? "V. L." : game.getReferee().getStoppage();
+		output = StringUtils.center("Fouls: " + fouls + ", TKO: " + tko, 30);
+		System.out.print(output);
+		System.out.println();
+		// 21
+		output = StringUtils.center(game.getFighter1().getName(), 22);
+		output += StringUtils.center("J2", 4);
+		sum = 0;
+		for (int i = 0; i <= 14; i++) {
+			output += StringUtils.center(game.getFighter1().getScore()[1][i] + "", 4);
+			sum += game.getFighter1().getScore()[1][i];
+		}
+		output += StringUtils.center(sum + "", 4);
+		output = output.replace(" 0 ", "   ");
+		System.out.print(output);
+		System.out.println();
+		// 22
+		output = StringUtils.center("", 22);
+		output += StringUtils.center("J3", 4);
+		sum = 0;
+		for (int i = 0; i <= 14; i++) {
+			output += StringUtils.center(game.getFighter1().getScore()[2][i] + "", 4);
+			sum += game.getFighter1().getScore()[2][i];
+		}
+		output += StringUtils.center(sum + "", 4);
+		output = output.replace(" 0 ", "   ");
 		System.out.print(output);
 		String[] nameWords1 = game.getFighter1().getName().split(" ");
 		String firstInitial1 = nameWords1[0].substring(0, 1);
@@ -811,72 +867,6 @@ public class AppView {
 		output += StringUtils.center(fighter2ShortName, 15);
 		System.out.print(output);
 		System.out.println();
-		// 19
-		
-		output = StringUtils.center("FIGHTER", 22);
-		output += StringUtils.center("J#", 4);
-		for (int i = 1; i <= 15; i++) {
-			output += StringUtils.center(i + "", 4);
-		}
-		output += StringUtils.center("T", 4);
-		System.out.print(output);
-		if (game.getAttacker() == null || game.isInControlCheck()) {
-			output = StringUtils.center("CONTROL", 30);
-		} else {
-			output = game.getAttacker().equals(game.getFighter1()) ? "    **    " : "          ";
-			output += StringUtils.center("CONTROL", 10);
-			output += game.getAttacker().equals(game.getFighter2()) ? "    **    " : "          ";
-		}
-		System.out.print(output);
-		System.out.println();
-		// 20
-		output = StringUtils.center("", 22);
-		output += StringUtils.center("J1", 4);
-		int sum = 0;
-		for (int i = 0; i <= 14; i++) {
-			output += StringUtils.center(game.getFighter1().getScore()[0][i] + "", 4);
-			sum += game.getFighter1().getScore()[0][i];
-		}
-		output += StringUtils.center(sum + "", 4);
-		output = output.replace(" 0 ", "   ");
-		System.out.print(output);
-		output = StringUtils.center(game.getFighter1().getPoints() + "", 10);
-		output += StringUtils.center("POINTS", 10);
-		output += StringUtils.center(game.getFighter2().getPoints() + "", 10);
-		System.out.print(output);
-		System.out.println();
-		// 21
-		output = StringUtils.center(game.getFighter1().getName(), 22);
-		output += StringUtils.center("J2", 4);
-		sum = 0;
-		for (int i = 0; i <= 14; i++) {
-			output += StringUtils.center(game.getFighter1().getScore()[1][i] + "", 4);
-			sum += game.getFighter1().getScore()[1][i];
-		}
-		output += StringUtils.center(sum + "", 4);
-		output = output.replace(" 0 ", "   ");
-		System.out.print(output);
-		output = StringUtils.center(game.getFighter1().getKnockdowns() + "", 10);
-		output += StringUtils.center("KNOCKDOWNS", 10);
-		output += StringUtils.center(game.getFighter2().getKnockdowns() + "", 10);
-		System.out.print(output);
-		System.out.println();
-		// 22
-		output = StringUtils.center("", 22);
-		output += StringUtils.center("J3", 4);
-		sum = 0;
-		for (int i = 0; i <= 14; i++) {
-			output += StringUtils.center(game.getFighter1().getScore()[2][i] + "", 4);
-			sum += game.getFighter1().getScore()[2][i];
-		}
-		output += StringUtils.center(sum + "", 4);
-		output = output.replace(" 0 ", "   ");
-		System.out.print(output);
-		output = StringUtils.center(game.getFighter1().getDamage() + "", 10);
-		output += StringUtils.center("DAMAGE", 10);
-		output += StringUtils.center(game.getFighter2().getDamage() + "", 10);
-		System.out.print(output);
-		System.out.println();
 		// 23
 		output = StringUtils.center("", 22);
 		output += StringUtils.center("J1", 4);
@@ -888,10 +878,13 @@ public class AppView {
 		output += StringUtils.center(sum + "", 4);
 		output = output.replace(" 0 ", "   ");
 		System.out.print(output);
-		// TODO is this correct?
-		output = StringUtils.center(game.getFighter1().getWarnings() + "", 10);
-		output += StringUtils.center("FOULS", 10);
-		output += StringUtils.center(game.getFighter2().getWarnings() + "", 10);
+		if (game.getAttacker() == null || game.isInControlCheck()) {
+			output = StringUtils.center("CONTROL", 30);
+		} else {
+			output = game.getAttacker().equals(game.getFighter1()) ? "    **    " : "          ";
+			output += StringUtils.center("CONTROL", 10);
+			output += game.getAttacker().equals(game.getFighter2()) ? "    **    " : "          ";
+		}
 		System.out.print(output);
 		System.out.println();
 		// 24
@@ -904,6 +897,46 @@ public class AppView {
 		}
 		output += StringUtils.center(sum + "", 4);
 		output = output.replace(" 0 ", "   ");
+		System.out.print(output);
+		output = StringUtils.center(game.getFighter1().getPoints() + "", 10);
+		output += StringUtils.center("POINTS", 10);
+		output += StringUtils.center(game.getFighter2().getPoints() + "", 10);
+		System.out.print(output);
+		System.out.println();
+		// 25
+		output = StringUtils.center("", 22);
+		output += StringUtils.center("J3", 4);
+		sum = 0;
+		for (int i = 0; i <= 14; i++) {
+			output += StringUtils.center(game.getFighter2().getScore()[2][i] + "", 4);
+			sum += game.getFighter2().getScore()[2][i];
+		}
+		output += StringUtils.center(sum + "", 4);
+		output = output.replace(" 0 ", "   ");
+		System.out.print(output);
+		output = StringUtils.center(game.getFighter1().getKnockdowns() + "", 10);
+		output += StringUtils.center("KNOCKDOWNS", 10);
+		output += StringUtils.center(game.getFighter2().getKnockdowns() + "", 10);
+		System.out.print(output);
+		System.out.println();
+		// 26
+		output = StringUtils.rightPad(messageLog.getMessages().get(0), 90);
+		System.out.print(output);
+		output = StringUtils.center(game.getFighter1().getDamage() + "", 10);
+		output += StringUtils.center("DAMAGE", 10);
+		output += StringUtils.center(game.getFighter2().getDamage() + "", 10);
+		System.out.print(output);
+		System.out.println();
+		// 27
+		output = StringUtils.rightPad(messageLog.getMessages().get(1), 90);
+		System.out.print(output);
+		output = StringUtils.center(game.getFighter1().getWarnings() + "", 10);
+		output += StringUtils.center("FOULS", 10);
+		output += StringUtils.center(game.getFighter2().getWarnings() + "", 10);
+		System.out.print(output);
+		System.out.println();
+		// 28
+		output = StringUtils.rightPad(messageLog.getMessages().get(2), 90);
 		System.out.print(output);
 		nameWords1 = game.getFighter1().getTrainer().getName().split(" ");
 		firstInitial1 = nameWords1[0].substring(0, 1);
@@ -924,16 +957,8 @@ public class AppView {
 		output += StringUtils.center(firstInitial2 + ". " + lastName2, 13);
 		System.out.print(output);
 		System.out.println();
-		// 25
-		output = StringUtils.center("", 22);
-		output += StringUtils.center("J3", 4);
-		sum = 0;
-		for (int i = 0; i <= 14; i++) {
-			output += StringUtils.center(game.getFighter2().getScore()[2][i] + "", 4);
-			sum += game.getFighter2().getScore()[2][i];
-		}
-		output += StringUtils.center(sum + "", 4);
-		output = output.replace(" 0 ", "   ");
+		// 29
+		output = StringUtils.rightPad(messageLog.getMessages().get(3), 90);
 		System.out.print(output);
 		nameWords1 = game.getFighter1().getCutMan().getName().split(" ");
 		firstInitial1 = nameWords1[0].substring(0, 1);
@@ -954,16 +979,11 @@ public class AppView {
 		output += StringUtils.center(firstInitial2 + ". " + lastName2, 13);
 		System.out.print(output);
 		System.out.println();
-		// 26-29
-		System.out.println(messageLog.getMessages().get(0));
-		System.out.println(messageLog.getMessages().get(1));
-		System.out.println(messageLog.getMessages().get(2));
-		System.out.println(messageLog.getMessages().get(3));
 		// 30 is for input, keep blank
 		
-		// wait 2 seconds before continuing
+		// wait before continuing
 		try {
-			Thread.sleep(2000);
+			Thread.sleep(waitTimeMillis);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
 		}

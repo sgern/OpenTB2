@@ -20,14 +20,19 @@ public class MessageLog {
 	}
 	
 	public void addToLog(String message) {
-		while (message.length() > 120) {
-			messages.add(message.substring(0, 120));
-			message = message.substring(120);
+		while (message.length() > 90) {
+			messages.add(message.substring(0, 90));
+			message = message.substring(90);
 		}
 		messages.add(message);
 		while (messages.size() > maxMessages) {
 			messages.remove(0);
 		}
+	}
+	
+	
+	public void addToCurrentMessage(String message) {
+		messages.set(maxMessages - 1, messages.get(maxMessages - 1) + message);
 	}
 	
 	public void clearLog() {
