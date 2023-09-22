@@ -67,28 +67,28 @@ public class AppView {
 	
 	public void printOptions(Options options) {
 		clearScreen();
-		System.out.println("(1) Number of Rounds:\t\t\t" + options.getMaxRounds());
-		System.out.println("(2) (E) Rating Selection Frequency:\t" + options.getERatingSelectionFrequency());
-		System.out.println("(3) Injuries:\t\t\t\t" + formatBoolean(options.isInjuriesEnabled()));
-		System.out.println("(4) CF Conversion:\t\t\t" + formatBoolean(options.isCFConversionEnabled()));
-		System.out.println("(5) Aggressiveness:\t\t\t" + formatBoolean(options.isAggressivenessEnabled()));
-		System.out.println("(6) Damage Sustained From a Foul:\t" + formatBoolean(options.isFoulDamageEnabled()));
-		System.out.println("(7) Foul Table Head Butt:\t\t" + formatBoolean(options.isHeadbuttCutEnabled()));
-		System.out.println("(8) Advanced Timing:\t\t\t" + options.getAdvancedTimingOption());
-		System.out.println("(9) Card Usage to Extend the Round:\t" + formatBoolean(options.isExtendRoundEnabled()));
-		System.out.println("(10) Mandatory 8-Count:\t\t\t" + formatBoolean(options.isMandatoryEightCountEnabled()));
-		System.out.println("(11) Saved by the Bell:\t\t\t" + formatBoolean(options.isSavedByTheBellEnabled()));
-		System.out.println("(12) Three-Knockdown Rule:\t\t" + formatBoolean(options.isThreeKnockdownRuleEnabled()));
-		System.out.println("(13) Southpaw:\t\t\t\t" + formatBoolean(options.isSouthpawEnabled()));
-		System.out.println("(14) Missing Punches Penalty:\t\t" + formatBoolean(options.isMissPenaltyEnabled()));
-		System.out.println("(15) Killer Instinct and Round Timing:\t" + formatBoolean(options.isKITimingEnabled()));
-		System.out.println("(16) Advanced Clinching:\t\t" + formatBoolean(options.isAdvancedClinchingEnabled()));
-		System.out.println("(17) Rated Referee:\t\t\t" + formatBoolean(options.isRatedRefereeEnabled()));
-		System.out.println("(18) Rated Corner Men:\t\t\t" + formatBoolean(options.isRatedCornerMenEnabled()));
-		System.out.println("(19) Referee Error Table:\t\t" + options.getRefereeErrorOption());
-		System.out.println("(20) Strategies:\t\t\t" + formatBoolean(options.isStrategiesEnabled()));
-		System.out.println("(21) Fighter Traits:\t\t\t" + formatBoolean(options.isFighterTraitsEnabled()));
-		System.out.println("(22) Throw in the Towel:\t\t" + formatBoolean(options.isThrowInTheTowelEnabled()));
+		System.out.println("(1) Number of Rounds:\t\t\t\t" + options.getMaxRounds());
+		System.out.println("(2) (E) Rating Selection Frequency:\t\t" + options.getERatingSelectionFrequency());
+		System.out.println("(3) Injuries (WIP):\t\t\t\t" + formatBoolean(options.isInjuriesEnabled()));
+		System.out.println("(4) CF Conversion (WIP):\t\t\t" + formatBoolean(options.isCFConversionEnabled()));
+		System.out.println("(5) Aggressiveness (WIP):\t\t\t" + formatBoolean(options.isAggressivenessEnabled()));
+		System.out.println("(6) Damage Sustained From a Foul (WIP):\t\t" + formatBoolean(options.isFoulDamageEnabled()));
+		System.out.println("(7) Foul Table Head Butt (WIP):\t\t\t" + formatBoolean(options.isHeadbuttCutEnabled()));
+		System.out.println("(8) Advanced Timing (WIP):\t\t\t" + options.getAdvancedTimingOption());
+		System.out.println("(9) Card Usage to Extend the Round (WIP):\t" + formatBoolean(options.isExtendRoundEnabled()));
+		System.out.println("(10) Mandatory 8-Count (WIP):\t\t\t" + formatBoolean(options.isMandatoryEightCountEnabled()));
+		System.out.println("(11) Saved by the Bell (WIP):\t\t\t" + formatBoolean(options.isSavedByTheBellEnabled()));
+		System.out.println("(12) Three-Knockdown Rule (WIP):\t\t" + formatBoolean(options.isThreeKnockdownRuleEnabled()));
+		System.out.println("(13) Southpaw (WIP):\t\t\t\t" + formatBoolean(options.isSouthpawEnabled()));
+		System.out.println("(14) Missing Punches Penalty (WIP):\t\t" + formatBoolean(options.isMissPenaltyEnabled()));
+		System.out.println("(15) Killer Instinct and Round Timing (WIP):\t" + formatBoolean(options.isKITimingEnabled()));
+		System.out.println("(16) Advanced Clinching (WIP):\t\t\t" + formatBoolean(options.isAdvancedClinchingEnabled()));
+		System.out.println("(17) Rated Referee:\t\t\t\t" + formatBoolean(options.isRatedRefereeEnabled()));
+		System.out.println("(18) Rated Corner Men:\t\t\t\t" + formatBoolean(options.isRatedCornerMenEnabled()));
+		System.out.println("(19) Referee Error Table (WIP):\t\t\t" + options.getRefereeErrorOption());
+		System.out.println("(20) Strategies (WIP):\t\t\t\t" + formatBoolean(options.isStrategiesEnabled()));
+		System.out.println("(21) Fighter Traits (WIP):\t\t\t" + formatBoolean(options.isFighterTraitsEnabled()));
+		System.out.println("(22) Throw in the Towel (WIP):\t\t\t" + formatBoolean(options.isThrowInTheTowelEnabled()));
 		System.out.println("(23) Exit");
 	}
 	

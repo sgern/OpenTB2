@@ -175,7 +175,7 @@ public class App {
 		if (options.getERatingSelectionFrequency().equals("PerRound")) {
 			// E-rated fighters choose fighting style
 			for (Fighter fighter : game.getFighters()) {
-				if (fighter.getStyle().equals("E")) {
+				if (fighter.getStyle().toUpperCase().equals("E")) {
 					view.messageLog.addToLog("Choose " + fighter.getName() + "'s fighting style: (B/S)");
 					boolean done = false;
 					while (!done) {
@@ -203,7 +203,7 @@ public class App {
 			if (options.getERatingSelectionFrequency().equals("PerTurn")) {
 				// E-rated fighters choose fighting style
 				for (Fighter fighter : game.getFighters()) {
-					if (fighter.getStyle().equals("E")) {
+					if (fighter.getStyle().toUpperCase().equals("E")) {
 						view.messageLog.addToLog("Choose " + fighter.getName() + "'s fighting style: (B/S)");
 						boolean done = false;
 						while (!done) {
