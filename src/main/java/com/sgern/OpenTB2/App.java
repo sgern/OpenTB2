@@ -2746,11 +2746,11 @@ public class App {
 					view.printOptionSelect(option, options.getOption(option), new String[] { "PerTurn", "PerRound" });
 					switch (in.nextInt()) {
 						case 1:
-							options.setAdvancedTimingOption("PerTurn");
+							options.setERatingSelectionFrequency("PerTurn");
 							done = true;
 							break;
 						case 2:
-							options.setAdvancedTimingOption("PerRound");
+							options.setERatingSelectionFrequency("PerRound");
 							done = true;
 							break;
 						case 3:

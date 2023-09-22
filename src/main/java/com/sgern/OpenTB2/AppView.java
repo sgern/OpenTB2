@@ -68,7 +68,7 @@ public class AppView {
 	public void printOptions(Options options) {
 		clearScreen();
 		System.out.println("(1) Number of Rounds:\t\t\t" + options.getMaxRounds());
-		System.out.println("(2) (E) Rating Selection Frequency:\t\t\t" + options.getERatingSelectionFrequency());
+		System.out.println("(2) (E) Rating Selection Frequency:\t" + options.getERatingSelectionFrequency());
 		System.out.println("(3) Injuries:\t\t\t\t" + formatBoolean(options.isInjuriesEnabled()));
 		System.out.println("(4) CF Conversion:\t\t\t" + formatBoolean(options.isCFConversionEnabled()));
 		System.out.println("(5) Aggressiveness:\t\t\t" + formatBoolean(options.isAggressivenessEnabled()));
