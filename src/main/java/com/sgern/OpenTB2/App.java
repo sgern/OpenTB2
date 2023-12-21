@@ -175,12 +175,12 @@ public class App {
 		if (options.getERatingSelectionFrequency().equals("PerRound")) {
 			// E-rated fighters choose fighting style
 			for (Fighter fighter : game.getFighters()) {
-				if (fighter.getStyle().toUpperCase().equals("E")) {
+				if (fighter.getStyle().equals("E")) {
 					view.messageLog.addToLog("Choose " + fighter.getName() + "'s fighting style: (B/S)");
 					boolean done = false;
 					while (!done) {
 						view.printGame(game, 2000);
-						switch (in.next()) {
+						switch (in.next().toUpperCase()) {
 							case "B":
 								done = true;
 								fighter.setCurrentStyle("B");
@@ -203,12 +203,12 @@ public class App {
 			if (options.getERatingSelectionFrequency().equals("PerTurn")) {
 				// E-rated fighters choose fighting style
 				for (Fighter fighter : game.getFighters()) {
-					if (fighter.getStyle().toUpperCase().equals("E")) {
+					if (fighter.getStyle().equals("E")) {
 						view.messageLog.addToLog("Choose " + fighter.getName() + "'s fighting style: (B/S)");
 						boolean done = false;
 						while (!done) {
 							view.printGame(game, 2000);
-							switch (in.next()) {
+							switch (in.next().toUpperCase()) {
 								case "B":
 									done = true;
 									fighter.setCurrentStyle("B");
@@ -491,17 +491,19 @@ public class App {
 							view.messageLog.addToLog("The fighters move to the " + game.getRingPosition() + ".");
 						}
 					}
-					card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
-					kd = game.getDefender().isCarryover() || game.getDefender().getKnockdowns() > 0 ? card.getKD2() : card.getKD();
-					if (kd <= 10) {
-						knockout(game);
-						if (!game.isInKI() && !game.isGameOver()) {
-							killerInstinct(game, false);
+					if (!deck.isEmpty() || game.isInOvertime()) {
+						card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
+						kd = game.getDefender().isCarryover() || game.getDefender().getKnockdowns() > 0 ? card.getKD2() : card.getKD();
+						if (kd <= 10) {
+							knockout(game);
+							if (!game.isInKI() && !game.isGameOver()) {
+								killerInstinct(game, false);
+							}
+						} else {
+							game.getDefender().modifyKD1(game.getDefender().getKD2());
+							view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
+							view.printGame(game, 2000);
 						}
-					} else {
-						game.getDefender().modifyKD1(game.getDefender().getKD2());
-						view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-						view.printGame(game, 2000);
 					}
 					break;
 				case "K":
@@ -561,17 +563,19 @@ public class App {
 							view.printGame(game, 2000);
 						}
 					}
-					card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
-					kd = game.getDefender().isCarryover() || game.getDefender().getKnockdowns() > 0 ? card.getKD2() : card.getKD();
-					if (kd == 1) {
-						knockout(game);
-						if (!game.isInKI() && !game.isGameOver()) {
-							killerInstinct(game, false);
+					if (!deck.isEmpty() || game.isInOvertime()) {
+						card = game.isInOvertime() ? game.getInactiveDeck().drawAndReturn() : deck.drawCard();
+						kd = game.getDefender().isCarryover() || game.getDefender().getKnockdowns() > 0 ? card.getKD2() : card.getKD();
+						if (kd == 1) {
+							knockout(game);
+							if (!game.isInKI() && !game.isGameOver()) {
+								killerInstinct(game, false);
+							}
+						} else {
+							game.getDefender().modifyKD1(game.getDefender().getKD2());
+							view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
+							view.printGame(game, 2000);
 						}
-					} else {
-						game.getDefender().modifyKD1(game.getDefender().getKD2());
-						view.messageLog.addToLog(game.getDefender().getName() + " feels a bit shaky...");
-						view.printGame(game, 2000);
 					}
 					break;
 			}
@@ -1945,7 +1949,8 @@ public class App {
 		view.messageLog.addToLog("");
 		view.messageLog.addToLog("Press Enter to return to the main menu.");
 		view.printGame(game, 0);
-		in.next();
+		in.nextLine();
+		in.nextLine();
 		view.messageLog.clearLog();
 	}
 	
@@ -3185,33 +3190,31 @@ public class App {
 						if (lineArr.length != 2) {
 							linesIterator.remove();
 							newLines.add(option + "=" + options.get(option));
-							break;
-						}
-						if (option.equals("NumberOfRounds") && !lineArr[1].equals("10") && !lineArr[1].equals("12") && !lineArr[1].equals("15")) {
+						} else if (option.equals("NumberOfRounds")) {
+							if (!lineArr[1].equals("10") && !lineArr[1].equals("12") && !lineArr[1].equals("15")) {
+								linesIterator.remove();
+								newLines.add(option + "=" + options.get(option));
+							}
+						} else if (option.equals("ERatingSelectionFrequency")) {
+							if (!lineArr[1].equals("PerTurn") && !lineArr[1].equals("PerRound")) {
+								linesIterator.remove();
+								newLines.add(option + "=" + options.get(option));
+							}
+						} else if (option.equals("AdvancedTiming")) {
+							if (!lineArr[1].equals("Off") && !lineArr[1].equals("On") && !lineArr[1].equals("Alternate")) {
+								linesIterator.remove();
+								newLines.add(option + "=" + options.get(option));
+							}
+						} else if (option.equals("RefereeErrorTable")) {
+							if (!lineArr[1].equals("Off") && !lineArr[1].equals("PerFight") && !lineArr[1].equals("PerRound")) {
+								linesIterator.remove();
+								newLines.add(option + "=" + options.get(option));
+							}
+						} else if (!lineArr[1].equals("True") && !lineArr[1].equals("False")) {
 							linesIterator.remove();
 							newLines.add(option + "=" + options.get(option));
-							break;
 						}
-						if (option.equals("ERatingSelectionFrequency") && !lineArr[1].equals("PerTurn") && !lineArr[1].equals("PerRound")) {
-							linesIterator.remove();
-							newLines.add(option + "=" + options.get(option));
-							break;
-						}
-						if (option.equals("AdvancedTiming") && !lineArr[1].equals("Off") && !lineArr[1].equals("On") && !lineArr[1].equals("Alternate")) {
-							linesIterator.remove();
-							newLines.add(option + "=" + options.get(option));
-							break;
-						}
-						if (option.equals("RefereeErrorTable") && !lineArr[1].equals("Off") && !lineArr[1].equals("PerFight") && !lineArr[1].equals("PerRound")) {
-							linesIterator.remove();
-							newLines.add(option + "=" + options.get(option));
-							break;
-						}
-						if (!lineArr[1].equals("True") && !lineArr[1].equals("False")) {
-							linesIterator.remove();
-							newLines.add(option + "=" + options.get(option));
-							break;
-						}
+						break;
 					}
 				}
 			}

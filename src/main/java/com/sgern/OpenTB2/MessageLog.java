@@ -21,8 +21,12 @@ public class MessageLog {
 	
 	public void addToLog(String message) {
 		while (message.length() > 90) {
-			messages.add(message.substring(0, 90));
-			message = message.substring(90);
+			int endIndex = 90;
+			while (message.charAt(endIndex) != ' ') {
+				endIndex--;
+			}
+			messages.add(message.substring(0, endIndex));
+			message = message.substring(endIndex + 1);
 		}
 		messages.add(message);
 		while (messages.size() > maxMessages) {
@@ -37,6 +41,9 @@ public class MessageLog {
 	
 	public void clearLog() {
 		messages.clear();
+		for (int i = 0; i < maxMessages; i++) {
+			messages.add("");
+		}
 	}
 	
 }
